@@ -4,10 +4,13 @@ import { AppService } from "./app.service";
 import { Barber } from "src/barber/entities/barber.entity";
 import { BarberController } from "src/barber/barber.controller";
 import { ClientController } from "src/client/client.controller";
+import { BarberModule } from "src/barber/barber.module";
+import { ClientModule } from "src/client/client.module";
+import { PrismaModule } from "src/prisma/prisma.module";
 
 @Module({
-  imports: [],
-  controllers: [AppController, BarberController, ClientController],
+  imports: [BarberModule, ClientModule, PrismaModule],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
