@@ -3,6 +3,7 @@ import { CreateClientDto } from "./dto/create-client.dto";
 import { UpdateClientDto } from "./dto/update-client.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { UNABLE_TO_FIND_POSTINSTALL_TRIGGER_JSON_PARSE_ERROR } from "@prisma/client/scripts/postinstall.js";
+import { ClientResponseDto } from "./dto/client-response.dto";
 
 @Injectable()
 export class ClientService {
@@ -28,7 +29,11 @@ export class ClientService {
 
   async findAll() {
     try {
-      const clients = await this.prisma.client.findMany();
+      const clients = await this.prisma.client.findMany({
+        include: {
+          plan: true,
+        },
+      });
 
       if (!clients) {
         throw new HttpException("Não foi possivel encontrar nenhum cliente", HttpStatus.NOT_FOUND);
@@ -40,11 +45,12 @@ export class ClientService {
     }
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<ClientResponseDto> {
     try {
       const client = await this.prisma.client.findFirst({
-        where: {
-          id: id,
+        where: { id: id },
+        include: {
+          plan: true,
         },
       });
 
@@ -52,7 +58,16 @@ export class ClientService {
         throw new HttpException("Não foi possivel encontrar o cliente", HttpStatus.NOT_FOUND);
       }
 
-      return client;
+      const response: ClientResponseDto = {
+        ...client,
+        plan: client.plan
+          ? {
+              ...client.plan,
+              value: client.plan.value.toNumber(),
+            }
+          : null,
+      };
+      return response;
     } catch (error) {
       throw new HttpException("Não foi possivel buscar pelo cliente", HttpStatus.BAD_REQUEST);
     }

@@ -31,4 +31,6 @@ export class CreateClientDto {
     minLowercase: 1,
   })
   password: string;
+
+  
 }

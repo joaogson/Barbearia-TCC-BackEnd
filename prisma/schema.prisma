@@ -30,4 +30,13 @@ model client {
   phone Int
   username String
   password String
+  plan plan?
+}
+
+model plan {
+  id Int @id @default(autoincrement())
+  value Decimal
+  haircutNumber Int
+  client client @relation(fields: [idClient],references: [id])
+  idClient Int @unique
 }
