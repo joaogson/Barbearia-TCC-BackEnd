@@ -14,29 +14,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model barber{
-  id Int @id @default(autoincrement())
-  name String 
-  email String
-  phone Int
+model barber {
+  id       Int       @id @default(autoincrement())
+  name     String
+  email    String
+  phone    Int
   username String
   password String
+  costumerService CostumerService[]
+  feedBack feedBack[]
 }
 
 model client {
-  id Int @id @default(autoincrement())
-  name String
-  email String
-  phone Int
+  id       Int       @id @default(autoincrement())
+  name     String
+  email    String
+  phone    Int
   username String
   password String
-  plan plan?
+  costumerService CostumerService[]
+  plan     plan?
+  feedback feedBack?
 }
 
 model plan {
-  id Int @id @default(autoincrement())
-  value Decimal
+  id            Int     @id @default(autoincrement())
+  value         Decimal
   haircutNumber Int
-  client client @relation(fields: [idClient],references: [id])
-  idClient Int @unique
+  client        client  @relation(fields: [idClient], references: [id])
+  idClient      Int     @unique
+}
+
+model feedBack {
+  id       Int    @id @default(autoincrement())
+  rating   Int
+  comment  String
+  client   client @relation(fields: [idClient], references: [id])
+  idClient Int    @unique
+  barber   barber @relation(fields: [idBarber], references: [id])
+  idBarber Int    @unique
+}
+
+model CostumerService{
+  id Int @id @default(autoincrement())
+  client client @relation(fields: [clientId], references: [id])
+  clientId  Int 
+  barber barber @relation(fields: [barberId], references: [id])
+  barberId Int 
+  ServiceTime DateTime
+  isPaid Boolean
 }

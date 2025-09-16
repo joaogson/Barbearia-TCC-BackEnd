@@ -1,4 +1,5 @@
 import { plan } from "generated/prisma";
+import { Feedback } from "src/feedback/entities/feedback.entity";
 
 export class Client {
   id: number;
@@ -10,4 +11,7 @@ export class Client {
 
   // plan | null por ser opcional
   plan?: plan | null;
+
+  // feedBack | null por ser opcional
+  feedBack?: Feedback | null;
 }
