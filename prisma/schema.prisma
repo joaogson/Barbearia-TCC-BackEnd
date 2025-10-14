@@ -63,4 +63,12 @@ model CostumerService{
   barberId Int 
   ServiceTime DateTime
   isPaid Boolean
+  Service Service @relation(fields: [idService], references: [id])
+  idService Int
+}
+
+model Service{
+  id Int @id @default(autoincrement())
+  description String
+  CostumerService CostumerService[]
 }

@@ -18,8 +18,9 @@ export class CostumerService {
         data: {
           ServiceTime: createCostumerServiceDto.ServiceTime,
           isPaid: createCostumerServiceDto.isPaid,
-          idClient: createCostumerServiceDto.clientId,
-          idBarber: createCostumerServiceDto.barberId,
+          clientId: createCostumerServiceDto.clientId,
+          barberId: createCostumerServiceDto.barberId,
+          idService: createCostumerServiceDto.serviceId,
         },
       });
       return newService;

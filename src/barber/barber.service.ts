@@ -14,7 +14,7 @@ export class BarberService {
           name: createBarberDto.name,
           email: createBarberDto.email,
           phone: createBarberDto.phone,
-          username: createBarberDto.username,
+          username: createBarberDto.username, 
           password: createBarberDto.password,
         },
       });

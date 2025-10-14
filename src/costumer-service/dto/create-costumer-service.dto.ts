@@ -17,4 +17,9 @@ export class CreateCostumerServiceDto {
   @IsPositive()
   @IsNotEmpty()
   barberId: number;
+
+  @IsInt()
+  @IsPositive()
+  @IsNotEmpty()
+  serviceId: number;
 }

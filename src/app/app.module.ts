@@ -8,9 +8,10 @@ import { FeedbackModule } from "src/feedback/feedback.module";
 import { CostumerServiceModule } from "src/costumer-service/costumer-service.module";
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from "@nestjs/common";
 import * as cors from "cors"; // Importa o pacote
+import { ServiceModule } from "src/service/service.module";
 
 @Module({
-  imports: [BarberModule, ClientModule, PrismaModule, PlanModule, FeedbackModule, CostumerServiceModule],
+  imports: [BarberModule, ClientModule, PrismaModule, PlanModule, FeedbackModule, CostumerServiceModule, ServiceModule],
   controllers: [AppController],
   providers: [AppService],
 })
