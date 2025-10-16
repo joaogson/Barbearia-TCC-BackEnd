@@ -14,6 +14,9 @@ export class CostumerService {
    */
   async create(createCostumerServiceDto: CreateCostumerServiceDto) {
     try {
+      if (!createCostumerServiceDto) {
+        throw new HttpException("Serviço vazio!", HttpStatus.BAD_REQUEST);
+      }
       const newService = await this.prisma.costumerService.create({
         data: {
           ServiceTime: createCostumerServiceDto.ServiceTime,
@@ -23,6 +26,7 @@ export class CostumerService {
           idService: createCostumerServiceDto.serviceId,
         },
       });
+      console.log("Serviço Criado");
       return newService;
     } catch (error) {
       // Trata erros de chave estrangeira (ex: clientId ou barberId não existem)
