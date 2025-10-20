@@ -3,7 +3,7 @@ import { IsBoolean, IsDateString, IsInt, IsNotEmpty, IsPositive } from "class-va
 export class CreateCostumerServiceDto {
   @IsDateString()
   @IsNotEmpty()
-  ServiceTime: Date;
+  ServiceTime: string;
 
   @IsBoolean()
   isPaid: boolean;
@@ -21,5 +21,5 @@ export class CreateCostumerServiceDto {
   @IsInt()
   @IsPositive()
   @IsNotEmpty()
-  serviceId: number;
+  servicesIds: number[];
 }

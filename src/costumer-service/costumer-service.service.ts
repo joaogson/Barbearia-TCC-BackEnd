@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateCostumerServiceDto } from "./dto/create-costumer-service.dto";
 import { UpdateCostumerServiceDto } from "./dto/update-costumer-service.dto";
+import { connect } from "http2";
 
 @Injectable()
 export class CostumerService {
@@ -17,19 +18,31 @@ export class CostumerService {
       if (!createCostumerServiceDto) {
         throw new HttpException("Serviço vazio!", HttpStatus.BAD_REQUEST);
       }
+      console.log(createCostumerServiceDto);
       const newService = await this.prisma.costumerService.create({
         data: {
           ServiceTime: createCostumerServiceDto.ServiceTime,
           isPaid: createCostumerServiceDto.isPaid,
           clientId: createCostumerServiceDto.clientId,
           barberId: createCostumerServiceDto.barberId,
-          idService: createCostumerServiceDto.serviceId,
+
+          Services: {
+            create: createCostumerServiceDto.servicesIds.map((serviceId) => ({
+              service: {
+                connect: { id: serviceId },
+              },
+            })),
+          },
+        },
+        include: {
+          Services: true,
         },
       });
-      console.log("Serviço Criado");
+      console.log(`Serviço Criado ${newService.ServiceTime}`);
       return newService;
     } catch (error) {
       // Trata erros de chave estrangeira (ex: clientId ou barberId não existem)
+      console.error("Erro detalhado: ", error);
       throw new HttpException("Não foi possível registrar o serviço.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -43,6 +56,7 @@ export class CostumerService {
         include: {
           client: true, // Inclui os dados do cliente
           barber: true, // Inclui os dados do barbeiro
+          Services: true,
         },
       });
       return services;
@@ -61,6 +75,7 @@ export class CostumerService {
       include: {
         client: true,
         barber: true,
+        Services: true,
       },
     });
 

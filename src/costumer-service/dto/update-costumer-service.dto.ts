@@ -5,7 +5,7 @@ import { IsBoolean, IsDateString, IsInt, IsOptional, IsPositive } from "class-va
 export class UpdateCostumerServiceDto extends PartialType(CreateCostumerServiceDto) {
   @IsDateString()
   @IsOptional()
-  ServiceTime?: Date;
+  ServiceTime?: string;
 
   @IsBoolean()
   @IsOptional()

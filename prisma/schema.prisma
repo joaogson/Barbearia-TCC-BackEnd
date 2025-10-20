@@ -63,12 +63,22 @@ model CostumerService{
   barberId Int 
   ServiceTime DateTime
   isPaid Boolean
-  Service Service @relation(fields: [idService], references: [id])
-  idService Int
+  Services ServiceOnCostumerService[]
+  
 }
 
 model Service{
   id Int @id @default(autoincrement())
   description String
-  CostumerService CostumerService[]
+  CostumerServices ServiceOnCostumerService[]
+}
+
+model ServiceOnCostumerService{
+  @@id([costumerServiceId, serviceId])
+  costumerServiceId Int
+  serviceId Int
+
+  costumerService CostumerService @relation(fields: [costumerServiceId], references: [id], onDelete: Cascade)
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }
