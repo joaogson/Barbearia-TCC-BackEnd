@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, IsStrongPassword, MaxLength, Max } from "class-validator";
 
-export class CreateBarberDto {
+export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(64)
@@ -14,12 +14,7 @@ export class CreateBarberDto {
   @IsString()
   @IsNotEmpty()
   @Max(11)
-  phone: number;
-
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(64)
-  username: string;
+  phone: string;
 
   @IsString()
   @IsNotEmpty()

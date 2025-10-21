@@ -1,6 +1,6 @@
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { BarberModule } from "src/barber/barber.module";
+import { BarberModule } from "src/user/barber.module";
 import { ClientModule } from "src/client/client.module";
 import { PrismaModule } from "src/prisma/prisma.module";
 import { PlanModule } from "src/plan/plan.module";
