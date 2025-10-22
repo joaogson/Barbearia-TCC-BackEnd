@@ -1,5 +1,4 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsString, MinLength, IsOptional } from "class-validator";
-import { Role } from "../../../generated/prisma/client";
 
 export class RegisterAuthDto {
   @IsEmail()
@@ -8,7 +7,7 @@ export class RegisterAuthDto {
 
   @IsString()
   @IsNotEmpty()
-  @MinLength(6)
+  @MinLength(8)
   password: string;
 
   @IsString()
@@ -18,8 +17,4 @@ export class RegisterAuthDto {
   @IsString()
   @IsNotEmpty()
   phone: string;
-
-  @IsEnum(Role)
-  @IsNotEmpty()
-  role: Role; // O usuário deve escolher 'CLIENT' ou 'BARBER' no registro
 }

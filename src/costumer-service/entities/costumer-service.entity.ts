@@ -1,4 +1,4 @@
-import { Barber } from "src/user/entities/barber.entity";
+import { Barber } from "src/barber/entities/barber.entity";
 import { Client } from "src/client/entities/client.entity";
 import { Service } from "src/service/entities/service.entity";
 

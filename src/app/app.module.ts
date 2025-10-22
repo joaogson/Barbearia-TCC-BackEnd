@@ -1,6 +1,6 @@
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { BarberModule } from "src/user/barber.module";
+import { UserModule } from "src/user/user.module";
 import { ClientModule } from "src/client/client.module";
 import { PrismaModule } from "src/prisma/prisma.module";
 import { PlanModule } from "src/plan/plan.module";
@@ -9,9 +9,11 @@ import { CostumerServiceModule } from "src/costumer-service/costumer-service.mod
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from "@nestjs/common";
 import * as cors from "cors"; // Importa o pacote
 import { ServiceModule } from "src/service/service.module";
+import { BarberModule } from "src/barber/barber.module";
+import { AuthModule } from "src/auth/auth.module";
 
 @Module({
-  imports: [BarberModule, ClientModule, PrismaModule, PlanModule, FeedbackModule, CostumerServiceModule, ServiceModule],
+  imports: [AuthModule, BarberModule, UserModule, ClientModule, PrismaModule, PlanModule, FeedbackModule, CostumerServiceModule, ServiceModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,34 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from "@nestjs/common";
-import { BarberService } from "./user.service";
-import { CreateBarberDto } from "./dto/create-barber.dto";
-import { UpdateBarberDto } from "./dto/update-user.dto";
+import { Controller, Get, Patch, Request, UseGuards } from "@nestjs/common";
+import { UserService } from "./user.service";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
+import { RolesGuard } from "src/auth/guards/role.guard";
+import { Role } from "generated/prisma";
+import { Roles } from "src/auth/decorators/roles.decorator";
 
-@Controller("barber")
+@ApiTags("user")
+@ApiBearerAuth()
+@Controller("user")
 export class UserController {
-  constructor(private readonly barberService: BarberService) {}
+  constructor(private userService: UserService) {}
 
-  @Post()
-  create(@Body() createBarberDto: CreateBarberDto) {
-    return this.barberService.create(createBarberDto);
+  @Get("me")
+  @UseGuards(JwtAuthGuard)
+  async getMyProfile(@Request() req) {
+    // req.user foi anexado pelo JwtAuthGuard e contém o payload do token
+    // { "sub": "user-id-...", "role": "BARBER" }
+    const userId = req.user.userId;
+
+    // Podemos retornar o usuário e seu perfil detalhado
+    return this.userService.findById(userId);
   }
 
-  @Get()
-  findAll() {
-    return this.barberService.findAll();
-  }
+  @Patch("upgradeToBarber")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BARBER)
+  async upgradeToBarber(@Request() req) {
+    const userId = req.user.userId;
+    const data = {
+      role: Role.BARBER,
+    };
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.barberService.findOne(+id);
+    return this.userService.update(userId, data);
   }
-
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateBarberDto: UpdateBarberDto) {
-    return this.barberService.update(+id, updateBarberDto);
-  }
-
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.barberService.remove(+id);
-  }
+  //@Getall
 }

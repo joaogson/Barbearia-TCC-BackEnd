@@ -1,26 +1,39 @@
-import { Injectable } from "@nestjs/common";
-import { CreateAuthDto } from "./dto/register-auth.dto";
-import { UpdateAuthDto } from "./dto/login-auth.dto";
-
+import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { RegisterAuthDto } from "./dto/register-auth.dto";
+import { LoginAuthDto } from "./dto/login-auth.dto";
+import { UserService } from "src/user/user.service";
+import { JwtService } from "@nestjs/jwt";
+import * as bcrypt from "bcrypt";
+import { Role } from "generated/prisma";
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return "This action adds a new auth";
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService
+  ) {}
+
+  async register(registerDto: RegisterAuthDto) {
+    const existingUser = await this.userService.findByEmail(registerDto.email);
+    if (existingUser) throw new ConflictException("E-mail ja cadastrado");
+
+    return this.userService.create(registerDto, Role.CLIENT);
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async login(loginDto: LoginAuthDto) {
+    const user = await this.userService.findByEmail(loginDto.email);
+    if (!user) throw new UnauthorizedException("Credenciais inválidas");
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    const IsPasswordMatching = await bcrypt.compare(loginDto.password, user.password);
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    if (!IsPasswordMatching) throw new UnauthorizedException("Senha inválida");
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    const payload = {
+      sub: user.id, // sub é o padrão do Jwt para o ID
+      role: user.role, // role para saber qual camada pode acessar
+    };
+
+    return {
+      accessToken: this.jwtService.sign(payload),
+    };
   }
 }

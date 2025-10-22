@@ -71,9 +71,9 @@ model feedBack {
   id       Int    @id @default(autoincrement())
   rating   Int
   comment  String
-  client   client @relation(fields: [idClient], references: [id])
+  client   client @relation(fields: [idClient], references: [id], onDelete: Cascade)
   idClient Int    @unique
-  barber   barber @relation(fields: [idBarber], references: [id])
+  barber   barber @relation(fields: [idBarber], references: [id], onDelete: Cascade)
   idBarber Int    @unique
 }
 

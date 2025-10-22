@@ -1,26 +1,53 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { CreateUserDto } from "./dto/create-User.dto";
+import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { PrismaService } from "src/prisma/prisma.service";
+import * as bcrypt from "bcrypt";
+import { Role } from "generated/prisma/client";
+import { User } from "./entities/user.entity";
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto, role: Role): Promise<Omit<User, "password">> {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
     try {
-      const newUser = await this.prisma.user.create({
-        data: {
-          name: createUserDto.name,
-          email: createUserDto.email,
-          phone: createUserDto.phone,
-          password: createUserDto.password,
-        },
+      const newUser = await this.prisma.$transaction(async (tx) => {
+        // 1. Criar o User
+        const user = await tx.user.create({
+          data: {
+            email: createUserDto.email,
+            name: createUserDto.name,
+            password: hashedPassword,
+            phone: createUserDto.phone,
+            role: role,
+          },
+        });
+
+        // 2. Criar o Perfil associado
+        if (user.role === Role.BARBER) {
+          await tx.barber.create({
+            data: {
+              userId: user.id,
+            },
+          });
+        } else if (user.role === Role.CLIENT) {
+          await tx.client.create({
+            data: {
+              userId: user.id,
+            },
+          });
+        }
+        return user;
       });
 
-      return newUser;
+      const { password, ...result } = newUser;
+      return result;
     } catch (error) {
-      throw new HttpException("Não foi possivel criar o barbeiro", HttpStatus.BAD_REQUEST);
+      console.error(error);
+      throw new HttpException("Não foi possivel criar o usuario", HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -38,43 +65,62 @@ export class UserService {
     }
   }
 
-  async findOne(id: number) {
+  async findById(id: number): Promise<User | null> {
     try {
-      const barber = await this.prisma.user.findFirst({
+      const user = await this.prisma.user.findUnique({
         where: {
           id: id,
         },
       });
 
-      if (!barber) {
+      if (!user) {
         throw new HttpException("Não foi possivel encontrar o usuario", HttpStatus.NOT_FOUND);
       }
 
-      return barber;
+      return user;
     } catch (error) {
       throw new HttpException("Não foi possivel buscar pelo usuario", HttpStatus.BAD_REQUEST);
     }
   }
 
+  async findByEmail(email: string): Promise<User | null> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+
+      if (user) {
+        return user;
+      }
+
+      return null;
+    } catch (error) {
+      throw new HttpException("Não foi possivel buscar pelo usuario", HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  
   async update(id: number, UpdateUserDto: UpdateUserDto) {
     try {
-      const findBarber = await this.prisma.user.findFirst({
+      const findUser = await this.prisma.user.findFirst({
         where: {
           id: id,
         },
       });
-      if (!findBarber) {
+      if (!findUser) {
         throw new HttpException("Este usuario não existe", HttpStatus.NOT_FOUND);
       }
 
-      const barber = await this.prisma.user.update({
+      const user = await this.prisma.user.update({
         where: {
-          id: findBarber.id,
+          id: findUser.id,
         },
         data: UpdateUserDto,
       });
 
-      return barber;
+      return user;
     } catch (error) {
       throw new HttpException("Não foi possivel atualizar os dados deste usuario", HttpStatus.BAD_REQUEST);
     }
