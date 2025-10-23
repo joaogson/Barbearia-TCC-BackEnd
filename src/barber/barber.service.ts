@@ -33,11 +33,9 @@ export class BarberService {
       });
 
       const userId = newBarber.userId;
-      const data = {
-        role: Role.BARBER,
-      };
+      const data = Role.BARBER
 
-      this.userService.update(userId, data);
+      this.userService.updateUserRole(userId, data);
 
       return newBarber;
     } catch (error) {

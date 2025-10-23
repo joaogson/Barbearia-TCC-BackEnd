@@ -19,11 +19,4 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @MaxLength(64)
   @IsOptional()
   readonly phone?: string;
-
-  @IsString()
-  @IsOptional()
-  readonly password?: string;
-
-  @IsEnum(Role)
-  readonly role?: Role;
 }
