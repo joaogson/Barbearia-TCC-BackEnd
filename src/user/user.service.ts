@@ -77,8 +77,8 @@ export class UserService {
       if (!user) {
         throw new HttpException("Não foi possivel encontrar o usuario", HttpStatus.NOT_FOUND);
       }
-      const { password, ...result } = user;
-      return result;
+
+      return user;
     } catch (error) {
       throw new HttpException("Não foi possivel buscar pelo usuario", HttpStatus.BAD_REQUEST);
     }
