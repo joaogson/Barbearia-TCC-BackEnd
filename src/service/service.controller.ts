@@ -19,7 +19,7 @@ export class ServiceController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.CLIENT)
   @Get()
   findAll() {
     return this.serviceService.findAll();
