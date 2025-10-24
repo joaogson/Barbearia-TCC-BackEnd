@@ -19,7 +19,7 @@ export class CostumerServiceController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.CLIENT)
   @Get()
   findAll() {
     return this.costumerServiceService.findAll();
@@ -33,7 +33,7 @@ export class CostumerServiceController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.CLIENT)
   @Patch(":id")
   update(@Param("id") id: string, @Body() updateCostumerServiceDto: UpdateCostumerServiceDto) {
     return this.costumerServiceService.update(+id, updateCostumerServiceDto);
