@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Body, Patch, Request, Param, Delete, UseGuards } from "@nestjs/common";
 import { CostumerService } from "./costumer-service.service";
 import { CreateCostumerServiceDto } from "./dto/create-costumer-service.dto";
 import { UpdateCostumerServiceDto } from "./dto/update-costumer-service.dto";
@@ -12,7 +12,7 @@ export class CostumerServiceController {
   constructor(private readonly costumerServiceService: CostumerService) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.CLIENT)
   @Post()
   create(@Body() createCostumerServiceDto: CreateCostumerServiceDto) {
     return this.costumerServiceService.create(createCostumerServiceDto);
@@ -30,6 +30,13 @@ export class CostumerServiceController {
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.costumerServiceService.findOne(+id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BARBER, Role.CLIENT)
+  findById(@Request() req) {
+    const id = req.user.id;
+    return this.costumerServiceService.findById(id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

@@ -4,10 +4,19 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { CreateCostumerServiceDto } from "./dto/create-costumer-service.dto";
 import { UpdateCostumerServiceDto } from "./dto/update-costumer-service.dto";
 import { connect } from "http2";
+import { ClientService } from "src/client/client.service";
+import { BarberService } from "src/barber/barber.service";
+import { Role } from "generated/prisma";
+import { use } from "passport";
+import { ROLES_KEY } from "src/auth/decorators/roles.decorator";
 
 @Injectable()
 export class CostumerService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly clientService: ClientService,
+    private readonly barberService: BarberService
+  ) {}
 
   /**
    * Cria um novo serviço de cliente no banco de dados.
@@ -82,6 +91,35 @@ export class CostumerService {
     if (!service) {
       throw new NotFoundException(`Serviço com ID ${id} não encontrado.`);
     }
+
+    return service;
+  }
+
+  async findById(id: number) {
+    const service = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({
+        where: { id: id },
+      });
+
+      if (user?.role == Role.BARBER) {
+        const barber = await tx.barber.findUnique({
+          where: { userId: user.id },
+        });
+        const service = await tx.costumerService.findMany({
+          where: { barberId: barber?.id },
+        });
+      } else {
+        const client = await tx.client.findUnique({
+          where: { userId: user?.id },
+        });
+
+        const service = await tx.costumerService.findMany({
+          where: { clientId: client?.id },
+        });
+
+        return service;
+      }
+    });
 
     return service;
   }
