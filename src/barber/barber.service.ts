@@ -84,7 +84,7 @@ export class BarberService {
         },
       });
     } catch (error) {
-      throw new HttpException("Não foi possivel criar o Periodo de inavitidade", HttpStatus.BAD_REQUEST);
+      throw new HttpException("Não foi possivel criar o Periodo de inavitidade!", HttpStatus.BAD_REQUEST);
     }
   }
 
