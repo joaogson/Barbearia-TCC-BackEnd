@@ -20,7 +20,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user{
+model User{
   id Int @id @default(autoincrement())
   name String
   email String @unique
@@ -30,60 +30,75 @@ model user{
   role Role @default(CLIENT)
 
   //se Role for igual a BARBER
-  barberProfile barber?
+  barberProfile Barber?
 
   //Se Role for igual a Client
-  clientProfile client?
+  clientProfile Client?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
 }
-model barber {
+model Barber {
   id Int @id @default(autoincrement())
   userId Int @unique
-  user user @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  workStartTime String @default("08:00")
+  workEndTime String @default("19:00")
+
+
+  inactivePeriods InactivePeriod[]
 
   costumerService CostumerService[]
-  feedBack feedBack[]
+  feedBack FeedBack[]
+}
+model InactivePeriod {
+  id Int @id @default(autoincrement())
+  date DateTime
+  startTime String
+  endTime String
+  barbedId Int
+  barber Barber @relation(fields: [barbedId], references: [id])
 }
 
-model client {
+model Client {
   id       Int       @id @default(autoincrement())
   
   userId Int @unique
-  user user @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   costumerService CostumerService[]
-  plan     plan?
-  feedback feedBack?
+  plan     Plan?
+  feedback FeedBack?
 }
 
-model plan {
+model Plan {
   id            Int     @id @default(autoincrement())
   value         Decimal
   haircutNumber Int
-  client        client  @relation(fields: [idClient], references: [id])
-  idClient      Int     @unique
+  client        Client  @relation(fields: [clientId], references: [id])
+  clientId      Int     @unique
 }
 
-model feedBack {
+model FeedBack {
   id       Int    @id @default(autoincrement())
   rating   Int
   comment  String
-  client   client @relation(fields: [idClient], references: [id], onDelete: Cascade)
-  idClient Int    @unique
-  barber   barber @relation(fields: [idBarber], references: [id], onDelete: Cascade)
-  idBarber Int    @unique
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId Int    @unique
+  barber   Barber @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  barberId Int    @unique
 }
 
 model CostumerService{
   id Int @id @default(autoincrement())
-  client client @relation(fields: [clientId], references: [id])
+  client Client @relation(fields: [clientId], references: [id])
   clientId  Int 
-  barber barber @relation(fields: [barberId], references: [id])
+  barber Barber @relation(fields: [barberId], references: [id])
   barberId Int 
   ServiceTime DateTime
+  totalDuration Int
   isCancelled Boolean @default(false)
   Services ServiceOnCostumerService[]
   
@@ -93,6 +108,7 @@ model Service{
   id Int @id @default(autoincrement())
   description String
   CostumerServices ServiceOnCostumerService[]
+  duration Int
 }
 
 model ServiceOnCostumerService{

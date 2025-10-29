@@ -11,6 +11,7 @@ export class ServiceService {
       const newService = await this.prisma.service.create({
         data: {
           description: createServiceDto.description,
+          duration: createServiceDto.duration,
         },
       });
 

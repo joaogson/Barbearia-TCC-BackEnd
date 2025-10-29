@@ -10,13 +10,8 @@ export class ClientService {
 
   async updateClient(userId: number, updadateClientDto: UpdateClientDto) {
     try {
-      const dataToUpdate: Prisma.clientUpdateInput = {};
-      if (updadateClientDto.planId === null) {
-        // Cenário: O usuário quer REMOVER o plano (enviou 'null')
-        dataToUpdate.plan = {
-          disconnect: true,
-        };
-      } else if (updadateClientDto.planId) {
+      const dataToUpdate: Prisma.ClientUpdateInput = {};
+      if (updadateClientDto.planId) {
         // Cenário: O usuário quer MUDAR ou ADICIONAR um plano (enviou um ID)
         dataToUpdate.plan = {
           connect: {

@@ -44,8 +44,6 @@ export class UserController {
     return this.userService.update(userId, dto);
   }
 
-
-
   @UseGuards(JwtAuthGuard)
   @Patch("update-password")
   async updatePassword(@Request() req, @Body() updatePasswordDto: UpdatePasswordDto) {

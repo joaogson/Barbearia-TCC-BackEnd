@@ -24,12 +24,29 @@ export class CostumerService {
         throw new HttpException("Serviço vazio!", HttpStatus.BAD_REQUEST);
       }
       console.log(createCostumerServiceDto);
+
+      //Salva a soma das durações dos serviços
+
+      const services = await this.prisma.service.findMany({
+        where: {
+          id: {
+            in: createCostumerServiceDto.servicesIds,
+          },
+        },
+        select: {
+          duration: true,
+        },
+      });
+
+      const totalDuration = services.reduce((sum, service) => sum + service.duration, 0);
+
       const newService = await this.prisma.costumerService.create({
         data: {
           ServiceTime: createCostumerServiceDto.ServiceTime,
           isCancelled: createCostumerServiceDto.isCancelled,
           clientId: createCostumerServiceDto.clientId,
           barberId: createCostumerServiceDto.barberId,
+          totalDuration: totalDuration,
 
           Services: {
             create: createCostumerServiceDto.servicesIds.map((serviceId) => ({

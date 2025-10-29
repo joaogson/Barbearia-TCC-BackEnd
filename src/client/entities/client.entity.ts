@@ -1,4 +1,4 @@
-import { plan } from "generated/prisma";
+import { Plan } from "generated/prisma";
 import { Feedback } from "src/feedback/entities/feedback.entity";
 
 export class Client {
@@ -10,7 +10,7 @@ export class Client {
   password: string;
 
   // plan | null por ser opcional
-  plan?: plan | null;
+  plan?: Plan | null;
 
   // feedBack | null por ser opcional
   feedBack?: Feedback | null;
