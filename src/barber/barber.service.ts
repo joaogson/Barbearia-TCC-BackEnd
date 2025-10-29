@@ -14,6 +14,23 @@ export class BarberService {
   /**
    * Busca o perfil do barbeiro pelo ID do usuário
    */
+
+  async getBarber(id: number) {
+    try {
+      const barber = await this.prisma.barber.findUnique({
+        where: { id: id },
+      });
+
+      if (!barber) {
+        throw new NotFoundException("Barbeiro não encontrado");
+      }
+
+      return barber;
+    } catch (error) {
+      throw new HttpException("Erro ao buscar o barbeiro", HttpStatus.BAD_REQUEST);
+}
+  }
+
   async getProfile(userId: number) {
     const profile = await this.prisma.barber.findUnique({
       where: { userId },
@@ -33,7 +50,7 @@ export class BarberService {
       });
 
       const userId = newBarber.userId;
-      const data = Role.BARBER
+      const data = Role.BARBER;
 
       this.userService.updateUserRole(userId, data);
 

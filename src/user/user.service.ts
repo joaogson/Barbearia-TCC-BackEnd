@@ -200,6 +200,20 @@ export class UserService {
       data: { role: role },
     });
 
+    if (updatedUser.role === Role.BARBER) {
+      // Criar perfil de barbeiro se não existir
+      const barberProfile = await this.prisma.barber.findUnique({
+        where: { userId: userId },
+      });
+
+      if (!barberProfile) {
+        // Se o perfil de barbeiro não existir, crie um novo
+        await this.prisma.barber.create({
+          data: { userId: userId },
+        });
+      }
+    }
+
     // 3. Remover o hash da senha da resposta antes de retorná-la
     const { password, ...result } = updatedUser;
     return result;

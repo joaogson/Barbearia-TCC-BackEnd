@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Request, Param, Delete, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Body, Patch, Request, Param, Delete, UseGuards, ParseIntPipe } from "@nestjs/common";
 import { CostumerService } from "./costumer-service.service";
 import { CreateCostumerServiceDto } from "./dto/create-costumer-service.dto";
 import { UpdateCostumerServiceDto } from "./dto/update-costumer-service.dto";
@@ -26,16 +26,19 @@ export class CostumerServiceController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
-  @Get(":id")
-  findOne(@Param("id") id: string) {
+  @Roles(Role.BARBER, Role.CLIENT)
+  @Get("find")
+  findOne(@Request() req) {
+    const id = req.user.userId;
     return this.costumerServiceService.findOne(+id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER, Role.CLIENT)
+  @Roles(Role.CLIENT, Role.BARBER)
+  @Get("me")
   findById(@Request() req) {
-    const id = req.user.id;
+    const id = req.user.userId;
+    console.log("Id é: ", id);
     return this.costumerServiceService.findById(id);
   }
 
@@ -44,6 +47,11 @@ export class CostumerServiceController {
   @Patch(":id")
   update(@Param("id") id: string, @Body() updateCostumerServiceDto: UpdateCostumerServiceDto) {
     return this.costumerServiceService.update(+id, updateCostumerServiceDto);
+  }
+
+@Patch(":id/cancel")
+  cancelCostumerService(@Param("id", ParseIntPipe) id: string) {
+    return this.costumerServiceService.cancelCostumerService(id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

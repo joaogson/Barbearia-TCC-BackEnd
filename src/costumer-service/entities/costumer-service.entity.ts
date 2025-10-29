@@ -5,7 +5,7 @@ import { Service } from "src/service/entities/service.entity";
 export class CostumerService {
   id: number;
   ServiceTime: Date;
-  isPaid: Boolean;
+  isCancelled: Boolean;
   clientId: number;
   client: Client;
   barberId: number;

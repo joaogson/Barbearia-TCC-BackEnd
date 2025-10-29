@@ -9,7 +9,7 @@ export class UpdateCostumerServiceDto extends PartialType(CreateCostumerServiceD
 
   @IsBoolean()
   @IsOptional()
-  isPaid?: boolean;
+  isCancelled?: boolean;
 
   @IsInt()
   @IsPositive()

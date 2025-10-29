@@ -84,7 +84,7 @@ model CostumerService{
   barber barber @relation(fields: [barberId], references: [id])
   barberId Int 
   ServiceTime DateTime
-  isPaid Boolean
+  isCancelled Boolean @default(false)
   Services ServiceOnCostumerService[]
   
 }

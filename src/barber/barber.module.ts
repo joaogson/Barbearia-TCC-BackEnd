@@ -3,9 +3,10 @@ import { BarberService } from "./barber.service";
 import { BarberController } from "./barber.controller";
 import { PrismaModule } from "../prisma/prisma.module";
 import { UserService } from "src/user/user.service";
+import { UserModule } from "src/user/user.module";
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, UserModule],
   controllers: [BarberController],
   providers: [BarberService, UserService],
 })

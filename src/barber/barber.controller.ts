@@ -1,4 +1,4 @@
-import { Controller, Patch, Body, UseGuards, Request, Get, ValidationPipe, Post, Req } from "@nestjs/common";
+import { Controller, Patch, Body, UseGuards, Request, Get, ValidationPipe, Post, Req, Param } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/role.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
@@ -12,9 +12,15 @@ import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 export class BarberController {
   constructor(private barberService: BarberService) {}
 
-  /**
-   * Rota para o BARBEIRO logado BUSCAR seu próprio perfil
-   */
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.CLIENT, Role.BARBER)
+  @Get(":id")
+  getProfile(@Param("id") id: string) {
+    console.log("ID recebido no controller:", id);
+    return this.barberService.getBarber(+id);
+  }
+
+  //Buscar o proprio perfil do barbeiro
   @Get("profile")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BARBER)

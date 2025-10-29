@@ -26,7 +26,7 @@ export class ServiceController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.CLIENT)
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.serviceService.findOne(+id);

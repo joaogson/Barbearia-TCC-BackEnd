@@ -19,8 +19,13 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   async getMyProfile(@Request() req) {
     const userId = req.user.userId;
-
     return this.userService.findById(userId);
+  }
+
+  @Get(":id")
+  @UseGuards(JwtAuthGuard)
+  async getUser(@Param("id", ParseIntPipe) id: number) {
+    return this.userService.findById(id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard) // Garante que o usuário está logado
@@ -38,6 +43,8 @@ export class UserController {
     //Se a permissão for válida, chama o serviço
     return this.userService.update(userId, dto);
   }
+
+
 
   @UseGuards(JwtAuthGuard)
   @Patch("update-password")

@@ -21,7 +21,7 @@ export class ClientController {
     return this.clientService.updateClient(userId, updateClientDto);
   }
 
-  @Get("profile")
+  @Get("me")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.CLIENT)
   getMyProfile(@Request() req) {

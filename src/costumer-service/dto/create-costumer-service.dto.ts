@@ -6,7 +6,7 @@ export class CreateCostumerServiceDto {
   ServiceTime: string;
 
   @IsBoolean()
-  isPaid: boolean;
+  isCancelled: boolean;
 
   @IsInt()
   @IsPositive()

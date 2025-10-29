@@ -12,11 +12,7 @@ import { ROLES_KEY } from "src/auth/decorators/roles.decorator";
 
 @Injectable()
 export class CostumerService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly clientService: ClientService,
-    private readonly barberService: BarberService
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Cria um novo serviço de cliente no banco de dados.
@@ -31,7 +27,7 @@ export class CostumerService {
       const newService = await this.prisma.costumerService.create({
         data: {
           ServiceTime: createCostumerServiceDto.ServiceTime,
-          isPaid: createCostumerServiceDto.isPaid,
+          isCancelled: createCostumerServiceDto.isCancelled,
           clientId: createCostumerServiceDto.clientId,
           barberId: createCostumerServiceDto.barberId,
 
@@ -74,13 +70,9 @@ export class CostumerService {
     }
   }
 
-  /**
-   * Encontra um serviço específico pelo ID.
-   * @param id - O ID do serviço a ser encontrado.
-   */
   async findOne(id: number) {
     const service = await this.prisma.costumerService.findUnique({
-      where: { id },
+      where: { id: id },
       include: {
         client: true,
         barber: true,
@@ -96,39 +88,49 @@ export class CostumerService {
   }
 
   async findById(id: number) {
-    const service = await this.prisma.$transaction(async (tx) => {
-      const user = await tx.user.findUnique({
-        where: { id: id },
-      });
+    console.log("Buscando serviços para o usuário com ID:", id);
+    const user = await this.prisma.user.findUnique({ where: { id: id } });
+    console.log("Usuário encontrado:", user);
+    if (!user) {
+      throw new NotFoundException(`Usuário com ID ${id} não encontrado.`);
+    }
 
-      if (user?.role == Role.BARBER) {
-        const barber = await tx.barber.findUnique({
-          where: { userId: user.id },
-        });
-        const service = await tx.costumerService.findMany({
-          where: { barberId: barber?.id },
-        });
-      } else {
-        const client = await tx.client.findUnique({
-          where: { userId: user?.id },
-        });
-
-        const service = await tx.costumerService.findMany({
-          where: { clientId: client?.id },
-        });
-
-        return service;
+    let whereClause = {};
+    if (user.role === Role.CLIENT) {
+      const client = await this.prisma.client.findUnique({ where: { userId: id } });
+      console.log("Cliente encontrado:", client);
+      if (client) {
+        whereClause = { clientId: client.id };
       }
-    });
+    } else if (user.role === Role.BARBER) {
+      const barber = await this.prisma.barber.findUnique({ where: { userId: id } });
+      console.log("Barbeiro encontrado:", barber);
+      if (barber) {
+        whereClause = { barberId: barber.id };
+      }
+    }
 
-    return service;
+    const costumerServices = await this.prisma.costumerService.findMany({
+      where: { ...whereClause, isCancelled: false },
+      orderBy: {
+        ServiceTime: "asc",
+      },
+      include: {
+        client: {
+          include: { user: true },
+        },
+        barber: {
+          include: { user: true },
+        },
+        Services: {
+          include: { service: true },
+        },
+      },
+    });
+    console.log("Serviços do usuário:", costumerServices);
+    return costumerServices;
   }
 
-  /**
-   * Atualiza os dados de um serviço de cliente.
-   * @param id - O ID do serviço a ser atualizado.
-   * @param updateCostumerServiceDto - Os novos dados para o serviço.
-   */
   async update(id: number, updateCostumerServiceDto: UpdateCostumerServiceDto) {
     await this.findOne(id); // Primeiro, verifica se o serviço existe
 
@@ -144,10 +146,16 @@ export class CostumerService {
     }
   }
 
-  /**
-   * Remove um serviço do banco de dados.
-   * @param id - O ID do serviço a ser removido.
-   */
+  async cancelCostumerService(id: string) {
+    const costumerService = await this.prisma.costumerService.update({
+      where: { id: Number(id) },
+      data: {
+        isCancelled: true,
+      },
+    });
+    return costumerService;
+  }
+
   async remove(id: number) {
     const serviceToRemove = await this.findOne(id); // Verifica a existência antes de remover
 
