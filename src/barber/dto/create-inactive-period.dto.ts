@@ -1,4 +1,5 @@
 import { IsDateString, IsNumber, IsOptional, IsString, Matches } from "class-validator";
+import { Barber } from "generated/prisma";
 
 export class CreateInactivePeriodDto {
   @IsDateString()
@@ -18,4 +19,6 @@ export class CreateInactivePeriodDto {
 
   @IsNumber()
   barberId: number;
+
+  barber: Barber;
 }

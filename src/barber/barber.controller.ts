@@ -1,4 +1,20 @@
-import { Controller, Patch, Body, UseGuards, Request, Get, ValidationPipe, Post, Param, Delete, Query, ParseIntPipe } from "@nestjs/common";
+import {
+  Controller,
+  Patch,
+  Body,
+  UseGuards,
+  Request,
+  Get,
+  ValidationPipe,
+  Post,
+  Param,
+  Delete,
+  Query,
+  ParseIntPipe,
+  HttpException,
+  HttpStatus,
+  ParseArrayPipe,
+} from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/role.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
@@ -7,12 +23,16 @@ import { BarberService } from "./barber.service";
 import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import { updateSettingsDto } from "./dto/update-barber.dto";
 import { CreateInactivePeriodDto } from "./dto/create-inactive-period.dto";
+import { AvailabilityService } from "./availability.service";
 
 @ApiTags("barber")
 @ApiBearerAuth()
 @Controller("barber")
 export class BarberController {
-  constructor(private barberService: BarberService) {}
+  constructor(
+    private barberService: BarberService,
+    private availabilityService: AvailabilityService
+  ) {}
 
   //BARBER
   //BARBER
@@ -63,7 +83,7 @@ export class BarberController {
   @Post("me/inactive-periods")
   @UseGuards(JwtAuthGuard)
   createInactivePeriod(@Request() req, @Body() createInactivePeriodDto: CreateInactivePeriodDto) {
-    const userId = req.user.id;
+    const userId = req.user.userId;
     return this.barberService.createInactivePeriods(userId, createInactivePeriodDto);
   }
 
@@ -71,7 +91,8 @@ export class BarberController {
   @Get("me/inactive-periods")
   @UseGuards(JwtAuthGuard)
   getInactivePeriods(@Request() req, @Query("date") date: string) {
-    const userId = req.user.id;
+    const userId = req.user.userId;
+    console.log(userId);
     return this.barberService.getInactivePeriodsByDate(userId, date);
   }
 
@@ -79,8 +100,19 @@ export class BarberController {
   @Delete("me/inactive-periods/:id")
   @UseGuards(JwtAuthGuard)
   deleteInactivePeriod(@Request() req, @Param("id", ParseIntPipe) id: number) {
-    const userId = req.user.id;
-    // O serviço deve verificar se o barbeiro logado é o "dono" deste período
-    return this.barberService.deleteInactivePeriods(userId, id);
+    const userId = req.user.userId;
+    console.log(req.user);
+    return this.barberService.deleteInactivePeriods(id, userId);
+  }
+
+  @Get(":barberId/availability")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BARBER, Role.CLIENT)
+  async getAvailability(
+    @Param("barberId", ParseIntPipe) barberId: number,
+    @Query("date") date: string,
+    @Query("serviceIds", new ParseArrayPipe({ items: Number, separator: "," })) serviceIds: number[]
+  ) {
+    return this.availabilityService.getAvailableSlots(barberId, date, serviceIds);
   }
 }
