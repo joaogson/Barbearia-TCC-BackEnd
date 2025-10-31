@@ -84,6 +84,7 @@ export class BarberService {
         data: {
           workStartTime: updateSettingsDto.workStartTime,
           workEndTime: updateSettingsDto.workEndTime,
+          breakBetweenCostumerService: updateSettingsDto.breakBetweenCostumerService,
         },
       });
     } catch (error) {

@@ -98,7 +98,8 @@ export class BarberController {
 
   // ROTA PARA DELETAR UM PERÍODO INATIVO
   @Delete("me/inactive-periods/:id")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BARBER)
   deleteInactivePeriod(@Request() req, @Param("id", ParseIntPipe) id: number) {
     const userId = req.user.userId;
     console.log(req.user);
@@ -115,4 +116,11 @@ export class BarberController {
   ) {
     return this.availabilityService.getAvailableSlots(barberId, date, serviceIds);
   }
+
+  @Get("me/interval")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BARBER)
+  getInterval(@Request() req){
+    
+}
 }

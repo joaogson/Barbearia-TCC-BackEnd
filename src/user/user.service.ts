@@ -212,6 +212,16 @@ export class UserService {
           data: { userId: userId },
         });
       }
+
+      const clientProfile = await this.prisma.client.findUnique({
+        where: { userId: userId },
+      });
+
+      if (clientProfile) {
+        await this.prisma.client.delete({
+          where: { userId: userId },
+        });
+      }
     }
 
     // 3. Remover o hash da senha da resposta antes de retorná-la

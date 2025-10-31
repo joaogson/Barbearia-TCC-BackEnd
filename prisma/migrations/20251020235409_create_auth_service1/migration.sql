@@ -14,10 +14,10 @@ ALTER TABLE `barber` ADD COLUMN `userId` INTEGER NOT NULL;
 ALTER TABLE `client` ADD COLUMN `userId` INTEGER NOT NULL;
 
 -- CreateIndex
-CREATE UNIQUE INDEX `barber_userId_key` ON `barber`(`userId`);
+CREATE UNIQUE INDEX `Barber_userId_key` ON `Barber`(`userId`);
 
 -- CreateIndex
-CREATE UNIQUE INDEX `client_userId_key` ON `client`(`userId`);
+CREATE UNIQUE INDEX `Client_userId_key` ON `Client`(`userId`);
 
 -- AddForeignKey
 ALTER TABLE `barber` ADD CONSTRAINT `barber_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

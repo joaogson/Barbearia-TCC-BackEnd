@@ -1,4 +1,4 @@
-import { IsInt, IsOptional, IsString, Matches } from "class-validator";
+import { IsInt, IsOptional, IsString, Matches, Min } from "class-validator";
 
 export class UpdateBarberDto {}
 
@@ -19,6 +19,10 @@ export class updateSettingsDto {
   })
   workEndTime?: string;
 
+  @IsOptional()
+  @IsInt()
+  @Min(0) // O valor mínimo deve ser 0
+  breakBetweenCostumerService?: number;
   // @IsOptional()
   // @IsInt()
   // appointmentInterval?: number;

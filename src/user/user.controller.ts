@@ -52,7 +52,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.CLIENT)
   @Patch(":id/role") // Endpoint específico para alterar o role de um usuário
   async updateUserRole(@Param("id", ParseIntPipe) userId: number, @Body() updateUserRoleDto: UpdateUserRoleDto) {
     return this.userService.updateUserRole(userId, updateUserRoleDto.role);

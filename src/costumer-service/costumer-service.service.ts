@@ -25,6 +25,15 @@ export class CostumerService {
       }
       console.log(createCostumerServiceDto);
 
+      const costumerService = await this.prisma.costumerService.findFirst({
+        where: {
+          ServiceTime: createCostumerServiceDto.ServiceTime,
+          barberId: createCostumerServiceDto.barberId,
+        },
+      });
+
+      if (costumerService) throw new HttpException("Ja existe um atendimento agendado para esse horario com esse barbeiro!", HttpStatus.BAD_REQUEST);
+
       //Salva a soma das durações dos serviços
 
       const services = await this.prisma.service.findMany({

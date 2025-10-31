@@ -47,6 +47,7 @@ model Barber {
   workStartTime String @default("08:00")
   workEndTime String @default("19:00")
 
+  breakBetweenCostumerService Int @default(0)
 
   inactivePeriods InactivePeriod[]
 
