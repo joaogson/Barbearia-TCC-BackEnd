@@ -14,6 +14,28 @@ export class BarberService {
     private userService: UserService
   ) {}
 
+  async getAllBarbers() {
+    try {
+      const barbers = await this.prisma.barber.findMany({
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+              phone: true,
+            },
+          },
+        },
+      });
+
+      if (!barbers) throw new HttpException("Não existem barbeiros", HttpStatus.NOT_FOUND);
+
+      return barbers;
+    } catch (error) {
+      throw new HttpException("Não foi possivel buscar pelos barbeiros", HttpStatus.BAD_REQUEST);
+    }
+  }
+
   /**
    * Busca o perfil do barbeiro pelo ID do usuário
    */

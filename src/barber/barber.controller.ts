@@ -36,6 +36,14 @@ export class BarberController {
 
   //BARBER
   //BARBER
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.CLIENT)
+  @Get()
+  GetAllBarbers() {
+    return this.barberService.getAllBarbers();
+  }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.CLIENT, Role.BARBER)
   @Get(":id")
@@ -120,7 +128,5 @@ export class BarberController {
   @Get("me/interval")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BARBER)
-  getInterval(@Request() req){
-    
-}
+  getInterval(@Request() req) {}
 }
