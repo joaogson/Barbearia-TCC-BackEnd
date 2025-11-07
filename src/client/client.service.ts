@@ -61,4 +61,42 @@ export class ClientService {
 
     return client.plan;
   }
+
+  async getClientsForPlan() {
+    try {
+      const clients = await this.prisma.client.findMany({
+        select: {
+          id: true,
+          user: {
+            select: { name: true },
+          },
+          plan: {
+            select: { id: true, haircutNumber: true, value: true },
+          },
+        },
+      });
+
+      return clients;
+    } catch (error) {
+      throw new HttpException("Não foi possivel buscar pelos clientes", HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async updateClientPlan(clientId: number, planId: number | null) {
+    try {
+      return this.prisma.client.update({
+        where: {
+          id: clientId,
+        },
+        data: {
+          planId: planId,
+        },
+        select: {
+          id: true,
+          user: { select: { name: true } },
+          plan: { select: { id: true, haircutNumber: true, value: true } },
+        },
+      });
+    } catch (error) {}
+  }
 }

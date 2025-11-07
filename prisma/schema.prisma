@@ -53,6 +53,7 @@ model Barber {
 
   costumerService CostumerService[]
   feedBack FeedBack[]
+
 }
 model InactivePeriod {
   id Int @id @default(autoincrement())
@@ -70,7 +71,8 @@ model Client {
   user User @relation(fields: [userId], references: [id])
 
   costumerService CostumerService[]
-  plan     Plan?
+  plan     Plan? @relation(fields: [planId], references: [id])
+  planId Int?
   feedback FeedBack?
 }
 
@@ -78,8 +80,8 @@ model Plan {
   id            Int     @id @default(autoincrement())
   value         Decimal
   haircutNumber Int
-  client        Client  @relation(fields: [clientId], references: [id])
-  clientId      Int     @unique
+  client        Client[] 
+  
 }
 
 model FeedBack {

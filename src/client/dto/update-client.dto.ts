@@ -1,6 +1,6 @@
 import { PartialType } from "@nestjs/mapped-types";
 import { CreateClientDto } from "./create-client.dto";
-import { IsOptional, IsString, Max, ValidateIf } from "class-validator";
+import { IsInt, IsOptional, IsString, Max, ValidateIf } from "class-validator";
 import { Plan } from "src/plan/entities/plan.entity";
 
 export class UpdateClientDto extends PartialType(CreateClientDto) {
@@ -28,4 +28,10 @@ export class UpdateClientDto extends PartialType(CreateClientDto) {
   @ValidateIf((o) => o.planId !== null) // Só valida se o valor não for 'null'
   @IsString() // ou @IsString(), dependendo do seu tipo de ID
   planId?: number | null;
+}
+
+export class UpdateClientPlanDto {
+  @IsInt()
+  @IsOptional() // Permite 'null'
+  planId: number | null;
 }

@@ -1,10 +1,10 @@
-import { Controller, Patch, Body, UseGuards, Request, Get, ValidationPipe } from "@nestjs/common";
+import { Controller, Patch, Body, UseGuards, Request, Get, ValidationPipe, Param, ParseIntPipe } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/role.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { Role } from "generated/prisma/client";
 import { ClientService } from "./client.service";
-import { UpdateClientDto } from "./dto/update-client.dto"; // Crie este DTO
+import { UpdateClientDto, UpdateClientPlanDto } from "./dto/update-client.dto"; // Crie este DTO
 import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 
 @ApiTags("client")
@@ -42,5 +42,19 @@ export class ClientController {
   @Roles(Role.BARBER)
   getClients(@Request() req) {
     return this.getClients(req);
+  }
+
+  @Get("management")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BARBER)
+  findAllForManagement() {
+    return this.clientService.getClientsForPlan();
+  }
+
+  @Patch(":clientId/plan")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BARBER)
+  updatePlan(@Param("clientId", ParseIntPipe) clientId: number, @Body() body: UpdateClientPlanDto) {
+    return this.clientService.updateClientPlan(clientId, body.planId);
   }
 }
