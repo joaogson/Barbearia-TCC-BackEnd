@@ -15,6 +15,7 @@ export class AuthController {
 
   @Post("login")
   login(@Body(ValidationPipe) loginAuthDto: LoginAuthDto) {
+    console.log("chegou aqui");
     return this.authService.login(loginAuthDto);
   }
 }

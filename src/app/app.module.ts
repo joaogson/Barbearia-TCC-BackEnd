@@ -24,7 +24,7 @@ export class AppModule implements NestModule {
     consumer
       .apply(
         cors({
-          origin: ["http://localhost:3001", "http://192.168.1.16:3001"], // Substitua pelo domínio do seu frontend
+          origin: ["http://localhost:3001", "http://192.168.1.52:3001"], // Substitua pelo domínio do seu frontend
           methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
           credentials: true,
         })
