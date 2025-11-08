@@ -13,11 +13,6 @@ export class PlanService {
         data: {
           value: createPlanDto.value,
           haircutNumber: createPlanDto.haircutNumber,
-          client: {
-            connect: {
-              id: createPlanDto.clientId,
-            },
-          },
         },
       });
 

@@ -6,7 +6,4 @@ export class CreatePlanDto {
 
   @IsNumber()
   haircutNumber: number;
-
-  @IsNotEmpty()
-  clientId: number;
 }

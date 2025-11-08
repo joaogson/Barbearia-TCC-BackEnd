@@ -32,6 +32,10 @@ export class ClientService {
   async getClient(userId: number) {
     const client = await this.prisma.client.findUnique({
       where: { userId },
+      include: {
+        plan: true,
+        feedback: true,
+      },
     });
     if (!client) {
       throw new HttpException("Cliente não encontrado", HttpStatus.NOT_FOUND);
