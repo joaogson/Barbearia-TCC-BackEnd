@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from "@nestjs/common";
 import { FeedbackService } from "./feedback.service";
 import { CreateFeedbackDto } from "./dto/create-feedback.dto";
 import { UpdateFeedbackDto } from "./dto/update-feedback.dto";
@@ -23,6 +23,15 @@ export class FeedbackController {
   @Get()
   findAll() {
     return this.feedbackService.findAll();
+  }
+
+  
+
+  @UseGuards(JwtAuthGuard)
+  @Get("me")
+  getMyFeedbacks(@Request() req) {
+    const userId = req.user.id; // Pega o ID do usuário do token JWT
+    return this.feedbackService.findMyFeedBack(userId);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

@@ -56,6 +56,60 @@ export class FeedbackService {
     }
   }
 
+  async findByBarber(barberId: number) {
+    try {
+      const feedbacks = await this.prisma.feedBack.findMany({
+        where: {
+          barberId: barberId,
+        },
+        select: {
+          id: true,
+          comment: true,
+          rating: true,
+          client: { select: { user: { select: { name: true, id: true } } } },
+          barber: { select: { user: { select: { name: true, id: true } } } },
+        },
+      });
+      return feedbacks;
+    } catch (error) {
+      throw new HttpException("Ocorreu um erro ao buscar os feedbacks.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findMyBarberFeedBacks(userId: number) {
+    const barber = await this.prisma.barber.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (!barber) {
+      // Se não for um barbeiro (ex: é um cliente), retorna lista vazia
+      return [];
+    }
+
+    return this.findByBarber(barber.id);
+  }
+
+  async findMyFeedBack(clientId: number) {
+    try {
+      const feedbacks = await this.prisma.feedBack.findMany({
+        where: {
+          clientId: clientId,
+        },
+        select: {
+          id: true,
+          comment: true,
+          rating: true,
+          client: { select: { user: { select: { name: true, id: true } } } },
+          barber: { select: { user: { select: { name: true, id: true } } } },
+        },
+      });
+      return feedbacks;
+    } catch (error) {
+      throw new HttpException("Ocorreu um erro ao buscar os feedbacks.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   /**
    * Encontra um feedback específico pelo ID.
    * @param id - O ID do feedback a ser encontrado.

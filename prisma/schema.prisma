@@ -87,11 +87,12 @@ model Plan {
 model FeedBack {
   id       Int    @id @default(autoincrement())
   rating   Int
-  comment  String
-  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  clientId Int    @unique
-  barber   Barber @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  comment  String?
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId Int  @unique
+  barber   Barber @relation(fields: [barberId], references: [id])
   barberId Int    @unique
+  @@unique([clientId,barberId])
 }
 
 model CostumerService{

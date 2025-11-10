@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsPositive, IsString, Max, Min } from "class-validator";
+import { IsInt, IsNotEmpty, IsOptional, IsPositive, IsString, Max, Min } from "class-validator";
 
 export class CreateFeedbackDto {
   @IsInt()
@@ -7,8 +7,8 @@ export class CreateFeedbackDto {
   rating: number;
 
   @IsString()
-  @IsNotEmpty()
-  comment: string;
+  @IsOptional()
+  comment?: string;
 
   @IsInt()
   @IsPositive()

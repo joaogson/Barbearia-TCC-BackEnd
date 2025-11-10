@@ -24,6 +24,7 @@ import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import { updateSettingsDto } from "./dto/update-barber.dto";
 import { CreateInactivePeriodDto } from "./dto/create-inactive-period.dto";
 import { AvailabilityService } from "./availability.service";
+import { FeedbackService } from "src/feedback/feedback.service";
 
 @ApiTags("barber")
 @ApiBearerAuth()
@@ -31,7 +32,8 @@ import { AvailabilityService } from "./availability.service";
 export class BarberController {
   constructor(
     private barberService: BarberService,
-    private availabilityService: AvailabilityService
+    private availabilityService: AvailabilityService,
+    private readonly feedbackService: FeedbackService
   ) {}
 
   //BARBER
@@ -129,4 +131,18 @@ export class BarberController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BARBER)
   getInterval(@Request() req) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Roles()
+  @Get(":id/feedBack")
+  findByBarber(@Param("id", ParseIntPipe) barberId: number) {
+    return this.feedbackService.findByBarber(barberId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me/feedback')
+  getMyFeedbacks(@Request() req) {
+    const userId = req.user.id; // Pega o ID do usuário do token JWT
+    return this.feedbackService.findMyBarberFeedBacks(userId);
+  }
 }
