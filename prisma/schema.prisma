@@ -12,7 +12,7 @@ enum Role{
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  output   = "../generated/prisma/client"
 }
 
 datasource db {
