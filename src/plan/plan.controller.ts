@@ -1,34 +1,47 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { PlanService } from './plan.service';
-import { CreatePlanDto } from './dto/create-plan.dto';
-import { UpdatePlanDto } from './dto/update-plan.dto';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from "@nestjs/common";
+import { PlanService } from "./plan.service";
+import { CreatePlanDto } from "./dto/create-plan.dto";
+import { UpdatePlanDto } from "./dto/update-plan.dto";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
+import { RolesGuard } from "src/auth/guards/role.guard";
+import { Role } from "generated/prisma";
+import { Roles } from "src/auth/decorators/roles.decorator";
 
-@Controller('plan')
+@Controller("plan")
 export class PlanController {
   constructor(private readonly planService: PlanService) {}
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BARBER)
   @Post()
   create(@Body() createPlanDto: CreatePlanDto) {
     return this.planService.create(createPlanDto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BARBER)
   @Get()
   findAll() {
     return this.planService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @UseGuards(JwtAuthGuard)
+  @Get(":id")
+  findOne(@Param("clientId") id: string) {
     return this.planService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePlanDto: UpdatePlanDto) {
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BARBER)
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updatePlanDto: UpdatePlanDto) {
     return this.planService.update(+id, updatePlanDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BARBER)
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.planService.remove(+id);
   }
 }

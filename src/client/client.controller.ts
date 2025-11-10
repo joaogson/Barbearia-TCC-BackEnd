@@ -1,34 +1,60 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ClientService } from './client.service';
-import { CreateClientDto } from './dto/create-client.dto';
-import { UpdateClientDto } from './dto/update-client.dto';
+import { Controller, Patch, Body, UseGuards, Request, Get, ValidationPipe, Param, ParseIntPipe } from "@nestjs/common";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/role.guard";
+import { Roles } from "../auth/decorators/roles.decorator";
+import { Role } from "generated/prisma/client";
+import { ClientService } from "./client.service";
+import { UpdateClientDto, UpdateClientPlanDto } from "./dto/update-client.dto"; // Crie este DTO
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 
-@Controller('client')
+@ApiTags("client")
+@ApiBearerAuth()
+@Controller("client")
 export class ClientController {
-  constructor(private readonly clientService: ClientService) {}
+  constructor(private clientService: ClientService) {}
 
-  @Post()
-  create(@Body() createClientDto: CreateClientDto) {
-    return this.clientService.create(createClientDto);
+  @Patch("profile")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.CLIENT)
+  updateMyProfile(@Request() req, @Body(ValidationPipe) updateClientDto: UpdateClientDto) {
+    const userId = req.user.userId;
+    return this.clientService.updateClient(userId, updateClientDto);
+  }
+
+  @Get("me")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.CLIENT)
+  getMyProfile(@Request() req) {
+    const userId = req.user.userId;
+    return this.clientService.getClient(userId);
+  }
+
+  @Get("my-plan")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.CLIENT)
+  getMyPlan(@Request() req) {
+    const userId = req.user.userId;
+    const plan = this.clientService.getMyPlan(userId);
   }
 
   @Get()
-  findAll() {
-    return this.clientService.findAll();
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BARBER)
+  getClients(@Request() req) {
+    return this.getClients(req);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.clientService.findOne(+id);
+  @Get("management")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BARBER)
+  findAllForManagement() {
+    return this.clientService.getClientsForPlan();
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClientDto: UpdateClientDto) {
-    return this.clientService.update(+id, updateClientDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clientService.remove(+id);
+  @Patch(":clientId/plan")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BARBER)
+  updatePlan(@Param("clientId", ParseIntPipe) clientId: number, @Body() body: UpdateClientPlanDto) {
+    return this.clientService.updateClientPlan(clientId, body.planId);
   }
 }

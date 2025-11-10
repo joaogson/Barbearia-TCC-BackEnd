@@ -1,26 +1,106 @@
-import { Injectable } from '@nestjs/common';
-import { CreateClientDto } from './dto/create-client.dto';
-import { UpdateClientDto } from './dto/update-client.dto';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
+import { UpdateClientDto } from "./dto/update-client.dto";
+import { promises } from "dns";
+import { Prisma } from "generated/prisma";
 
 @Injectable()
 export class ClientService {
-  create(createClientDto: CreateClientDto) {
-    return 'This action adds a new client';
+  constructor(private prisma: PrismaService) {}
+
+  async updateClient(userId: number, updadateClientDto: UpdateClientDto) {
+    try {
+      const dataToUpdate: Prisma.ClientUpdateInput = {};
+      if (updadateClientDto.planId) {
+        // Cenário: O usuário quer MUDAR ou ADICIONAR um plano (enviou um ID)
+        dataToUpdate.plan = {
+          connect: {
+            id: updadateClientDto.planId, // Conecte ao plano com este ID
+          },
+        };
+      }
+
+      return await this.prisma.client.update({
+        where: { userId: userId },
+        data: dataToUpdate,
+      });
+    } catch (error) {
+      throw new HttpException("Cliente não encontrado", HttpStatus.NOT_FOUND);
+    }
   }
 
-  findAll() {
-    return `This action returns all client`;
+  async getClient(userId: number) {
+    const client = await this.prisma.client.findUnique({
+      where: { userId },
+      include: {
+        plan: true,
+        feedback: true,
+      },
+    });
+    if (!client) {
+      throw new HttpException("Cliente não encontrado", HttpStatus.NOT_FOUND);
+    }
+    return client;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} client`;
+  async getClients(userId: number) {
+    try {
+      const clients = await this.prisma.client.findMany();
+    } catch (error) {
+      throw new HttpException("Não foi possivel buscar pelos clientes", HttpStatus.BAD_REQUEST);
+    }
   }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    return `This action updates a #${id} client`;
+  async getMyPlan(userId: number) {
+    const client = await this.prisma.client.findUnique({
+      where: {
+        userId: userId,
+      },
+      include: {
+        plan: true,
+      },
+    });
+
+    if (!client) throw new HttpException("Cliente não encontrado", HttpStatus.NOT_FOUND);
+
+    return client.plan;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} client`;
+  async getClientsForPlan() {
+    try {
+      const clients = await this.prisma.client.findMany({
+        select: {
+          id: true,
+          user: {
+            select: { name: true },
+          },
+          plan: {
+            select: { id: true, haircutNumber: true, value: true },
+          },
+        },
+      });
+
+      return clients;
+    } catch (error) {
+      throw new HttpException("Não foi possivel buscar pelos clientes", HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async updateClientPlan(clientId: number, planId: number | null) {
+    try {
+      return this.prisma.client.update({
+        where: {
+          id: clientId,
+        },
+        data: {
+          planId: planId,
+        },
+        select: {
+          id: true,
+          user: { select: { name: true } },
+          plan: { select: { id: true, haircutNumber: true, value: true } },
+        },
+      });
+    } catch (error) {}
   }
 }
