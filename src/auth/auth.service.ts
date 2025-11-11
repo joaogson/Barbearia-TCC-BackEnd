@@ -5,7 +5,7 @@ import { UserService } from "src/user/user.service";
 import { JwtService } from "@nestjs/jwt";
 import * as crypto from "crypto"; // Módulo nativo do Node.js
 import * as bcrypt from "bcrypt";
-import { Role } from "generated/prisma";
+import { Role } from "generated/prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
 import { MailerService } from "@nestjs-modules/mailer";
 @Injectable()

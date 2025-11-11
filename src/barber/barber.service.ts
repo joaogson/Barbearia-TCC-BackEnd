@@ -2,7 +2,7 @@ import { ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundExce
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateBarberDto } from "./dto/create-barber.dto";
 import { UserService } from "src/user/user.service";
-import { Role } from "generated/prisma";
+import { Role } from "generated/prisma/client";
 import { updateSettingsDto } from "./dto/update-barber.dto";
 import { CreateInactivePeriodDto } from "./dto/create-inactive-period.dto";
 import { Console } from "console";

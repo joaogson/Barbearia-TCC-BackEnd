@@ -1,14 +1,9 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateCostumerServiceDto } from "./dto/create-costumer-service.dto";
 import { UpdateCostumerServiceDto } from "./dto/update-costumer-service.dto";
-import { connect } from "http2";
-import { ClientService } from "src/client/client.service";
-import { BarberService } from "src/barber/barber.service";
-import { Role } from "generated/prisma";
-import { use } from "passport";
-import { ROLES_KEY } from "src/auth/decorators/roles.decorator";
+import { Role } from "generated/prisma/client";
+
 
 @Injectable()
 export class CostumerService {

@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestj
 import { PrismaService } from "../prisma/prisma.service";
 import { UpdateClientDto } from "./dto/update-client.dto";
 import { promises } from "dns";
-import { Prisma } from "generated/prisma";
+import { Prisma } from "generated/prisma/client";
 
 @Injectable()
 export class ClientService {
