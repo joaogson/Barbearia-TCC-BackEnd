@@ -4,7 +4,7 @@ import { CreatePlanDto } from "./dto/create-plan.dto";
 import { UpdatePlanDto } from "./dto/update-plan.dto";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { RolesGuard } from "src/auth/guards/role.guard";
-import { Role } from "generated/prisma";
+import { Role } from "generated/prisma/client";
 import { Roles } from "src/auth/decorators/roles.decorator";
 
 @Controller("plan")

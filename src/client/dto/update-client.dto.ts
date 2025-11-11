@@ -1,7 +1,6 @@
 import { PartialType } from "@nestjs/mapped-types";
 import { CreateClientDto } from "./create-client.dto";
 import { IsInt, IsOptional, IsString, Max, ValidateIf } from "class-validator";
-import { Plan } from "src/plan/entities/plan.entity";
 
 export class UpdateClientDto extends PartialType(CreateClientDto) {
   @IsOptional()
