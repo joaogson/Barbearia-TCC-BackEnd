@@ -29,6 +29,10 @@ model User{
   phone String
   role Role @default(CLIENT)
 
+  passwordResetToken String? @unique
+
+  passwordResetTokenExpires DateTime?
+
   //se Role for igual a BARBER
   barberProfile Barber?
 
@@ -73,7 +77,7 @@ model Client {
   costumerService CostumerService[]
   plan     Plan? @relation(fields: [planId], references: [id])
   planId Int?
-  feedback FeedBack?
+  feedback FeedBack[]
 }
 
 model Plan {
@@ -87,11 +91,12 @@ model Plan {
 model FeedBack {
   id       Int    @id @default(autoincrement())
   rating   Int
-  comment  String
-  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  clientId Int    @unique
-  barber   Barber @relation(fields: [barberId], references: [id], onDelete: Cascade)
-  barberId Int    @unique
+  comment  String?
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId Int 
+  barber   Barber @relation(fields: [barberId], references: [id])
+  barberId Int    
+  @@unique([clientId,barberId])
 }
 
 model CostumerService{
