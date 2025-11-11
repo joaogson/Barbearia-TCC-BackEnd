@@ -11,9 +11,9 @@ export class AppController {
 
   @Get("/health") // <- O novo endpoint
   async healthCheck() {
-    // Esta query é leve e força o banco a ficar acordado
+    // Esta query força o banco a ficar acordado
     await this.prisma.$queryRaw`SELECT 1`;
-
+    console.log("OK");
     return { status: "ok", time: new Date() };
   }
 
