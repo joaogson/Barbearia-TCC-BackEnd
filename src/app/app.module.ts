@@ -51,7 +51,7 @@ export class AppModule implements NestModule {
     consumer
       .apply(
         cors({
-          origin: [], // Substitua pelo domínio do seu frontend
+          origin: ['https://barbearia-arwhxgm0a-joao-sonalios-projects.vercel.app'], // Substitua pelo domínio do seu frontend
           methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
           credentials: true,
         })
