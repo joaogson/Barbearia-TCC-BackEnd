@@ -6,8 +6,7 @@ import { PrismaModule } from "src/prisma/prisma.module";
 import { PlanModule } from "src/plan/plan.module";
 import { FeedbackModule } from "src/feedback/feedback.module";
 import { CostumerServiceModule } from "src/costumer-service/costumer-service.module";
-import { Module, NestModule, MiddlewareConsumer, RequestMethod } from "@nestjs/common";
-import * as cors from "cors"; // Importa o pacote
+import { Module, MiddlewareConsumer, RequestMethod } from "@nestjs/common";
 import { ServiceModule } from "src/service/service.module";
 import { BarberModule } from "src/barber/barber.module";
 import { AuthModule } from "src/auth/auth.module";
@@ -44,19 +43,4 @@ import { hostname } from "os";
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    const cors = require("cors");
-    // 🚨 Esta linha força o CORS a ser aplicado antes de qualquer rota
-    consumer
-      .apply(
-        cors({
-          origin: ['https://barbearia-arwhxgm0a-joao-sonalios-projects.vercel.app'], // Substitua pelo domínio do seu frontend
-          methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-          credentials: true,
-        })
-      )
-      // Aplica a todas as rotas (path: '*') e todos os métodos (RequestMethod.ALL)
-      .forRoutes({ path: "*", method: RequestMethod.ALL });
-  }
-}
+export class AppModule  {}
