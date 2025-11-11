@@ -133,16 +133,16 @@ export class BarberController {
   getInterval(@Request() req) {}
 
   @UseGuards(JwtAuthGuard)
+  @Get("me/feedback")
+  getMyFeedbacks(@Request() req) {
+    const userId = req.user.userId; // Pega o ID do usuário do token JWT
+    return this.feedbackService.findMyBarberFeedBacks(userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Roles()
   @Get(":id/feedBack")
   findByBarber(@Param("id", ParseIntPipe) barberId: number) {
     return this.feedbackService.findByBarber(barberId);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('me/feedback')
-  getMyFeedbacks(@Request() req) {
-    const userId = req.user.id; // Pega o ID do usuário do token JWT
-    return this.feedbackService.findMyBarberFeedBacks(userId);
   }
 }

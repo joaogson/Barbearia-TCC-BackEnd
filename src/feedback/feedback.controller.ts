@@ -11,11 +11,13 @@ import { Role } from "generated/prisma/client";
 export class FeedbackController {
   constructor(private readonly feedbackService: FeedbackService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createFeedbackDto: CreateFeedbackDto) {
-    return this.feedbackService.create(createFeedbackDto);
+  create(@Request() req, @Body() createFeedbackDto: CreateFeedbackDto) {
+    const clientId = req.user.userId;
+    console.log("client: ", clientId);
+    console.log(createFeedbackDto);
+    return this.feedbackService.create(createFeedbackDto, clientId);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -25,12 +27,10 @@ export class FeedbackController {
     return this.feedbackService.findAll();
   }
 
-  
-
   @UseGuards(JwtAuthGuard)
   @Get("me")
   getMyFeedbacks(@Request() req) {
-    const userId = req.user.id; // Pega o ID do usuário do token JWT
+    const userId = req.user.userId; // Pega o ID do usuário do token JWT
     return this.feedbackService.findMyFeedBack(userId);
   }
 
@@ -49,9 +49,9 @@ export class FeedbackController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.CLIENT)
   @Delete(":id")
-  remove(@Param("id") id: string) {
+  remove(@Param("id") id: number) {
     return this.feedbackService.remove(+id);
   }
 }

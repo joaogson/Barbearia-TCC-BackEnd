@@ -57,6 +57,4 @@ export class UserController {
   async updateUserRole(@Param("id", ParseIntPipe) userId: number, @Body() updateUserRoleDto: UpdateUserRoleDto) {
     return this.userService.updateUserRole(userId, updateUserRoleDto.role);
   }
-
-  //@Getall
 }

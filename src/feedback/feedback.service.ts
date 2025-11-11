@@ -12,7 +12,19 @@ export class FeedbackService {
    * Cria um novo feedback no banco de dados.
    * @param createFeedbackDto - Dados para a criação do feedback.
    */
-  async create(createFeedbackDto: CreateFeedbackDto) {
+  async create(createFeedbackDto: CreateFeedbackDto, clientId: number) {
+    const barber = await this.prisma.barber.findUnique({
+      where: {
+        id: createFeedbackDto.barberId,
+      },
+    });
+
+    const client = await this.prisma.client.findUnique({
+      where: {
+        userId: clientId,
+      },
+    });
+
     try {
       // Suposição: O DTO de criação terá rating, comment, barberId e clientId.
       const newFeedback = await this.prisma.feedBack.create({
@@ -21,19 +33,20 @@ export class FeedbackService {
           comment: createFeedbackDto.comment,
           barber: {
             connect: {
-              id: createFeedbackDto.barberId,
+              id: barber?.id,
             },
           },
           client: {
             connect: {
-              id: createFeedbackDto.clientId,
+              id: client?.id,
             },
           },
         },
       });
-
+      console.log(newFeedback);
       return newFeedback;
     } catch (error) {
+      console.error(error);
       // Trata erros de chave estrangeira (ex: barberId ou clientId não existem)
       throw new HttpException("Não foi possível registrar o feedback.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -92,6 +105,7 @@ export class FeedbackService {
 
   async findMyFeedBack(clientId: number) {
     try {
+      console.log(clientId);
       const feedbacks = await this.prisma.feedBack.findMany({
         where: {
           clientId: clientId,
@@ -157,8 +171,12 @@ export class FeedbackService {
    */
   async remove(id: number) {
     // Primeiro, verifica se o feedback existe para garantir uma mensagem de erro clara
-    const feedbackToRemove = await this.findOne(id);
-
+    const feedbackToRemove = await this.prisma.feedBack.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    console.log(feedbackToRemove);
     try {
       await this.prisma.feedBack.delete({
         where: { id },

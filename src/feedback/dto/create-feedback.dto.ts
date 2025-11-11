@@ -12,9 +12,5 @@ export class CreateFeedbackDto {
 
   @IsInt()
   @IsPositive()
-  clientId: number;
-
-  @IsInt()
-  @IsPositive()
   barberId: number;
 }
