@@ -34,16 +34,8 @@ export class FeedbackService {
         data: {
           rating: createFeedbackDto.rating,
           comment: createFeedbackDto.comment,
-          barber: {
-            connect: {
-              id: barber?.id,
-            },
-          },
-          client: {
-            connect: {
-              id: client?.id,
-            },
-          },
+          barberId: createFeedbackDto.barberId,
+          clientId: createFeedbackDto.barberId,
         },
       });
       console.log(newFeedback);
