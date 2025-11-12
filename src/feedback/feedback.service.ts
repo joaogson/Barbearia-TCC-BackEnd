@@ -25,6 +25,9 @@ export class FeedbackService {
       },
     });
 
+    if (!client && !barber) {
+      throw new HttpException("Cliente e Barbeiro não encontrados", HttpStatus.NOT_FOUND);
+    }
     try {
       // Suposição: O DTO de criação terá rating, comment, barberId e clientId.
       const newFeedback = await this.prisma.feedBack.create({

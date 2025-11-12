@@ -121,6 +121,7 @@ export class AvailabilityService {
 
       return availableSlots.map((slot) => slot.toISOString());
     } catch (error) {
+      console.error(error);
       throw new HttpException("Não foi possivel resgatar os horarios disponiveis", HttpStatus.BAD_REQUEST);
     }
   }
