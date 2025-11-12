@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateFeedbackDto } from "./dto/create-feedback.dto";
@@ -25,27 +25,27 @@ export class FeedbackService {
       },
     });
 
+    if (!client && !barber) {
+      throw new HttpException("Cliente e Barbeiro não encontrados", HttpStatus.NOT_FOUND);
+    }
     try {
       // Suposição: O DTO de criação terá rating, comment, barberId e clientId.
       const newFeedback = await this.prisma.feedBack.create({
         data: {
           rating: createFeedbackDto.rating,
           comment: createFeedbackDto.comment,
-          barber: {
-            connect: {
-              id: barber?.id,
-            },
-          },
-          client: {
-            connect: {
-              id: client?.id,
-            },
-          },
+          barberId: createFeedbackDto.barberId,
+          clientId: createFeedbackDto.barberId,
         },
       });
       console.log(newFeedback);
       return newFeedback;
     } catch (error) {
+      if (error.code === "P2002") {
+        alert("Você já avaliou este profissional.");
+        throw new ConflictException("Você já avaliou este profissional.");
+      }
+
       console.error(error);
       // Trata erros de chave estrangeira (ex: barberId ou clientId não existem)
       throw new HttpException("Não foi possível registrar o feedback.", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -103,13 +103,47 @@ export class FeedbackService {
     return this.findByBarber(barber.id);
   }
 
-  async findMyFeedBack(clientId: number) {
+  async findFeedbacksByUser(userId: number, role: string) {
     try {
-      console.log(clientId);
+      let whereClause = {}; // Este será o filtro dinâmico
+
+      // 1. Se o usuário for um cliente...
+      if (role === "CLIENT") {
+        // ...precisamos encontrar o ID do perfil de cliente dele
+        const client = await this.prisma.client.findUnique({
+          where: { userId: userId },
+          select: { id: true },
+        });
+
+        // Se não tiver perfil de cliente, não tem feedbacks
+        if (!client) {
+          return [];
+        }
+        // Define o filtro para buscar pelo clientId
+        whereClause = { clientId: client.id };
+
+        // 2. Se o usuário for um barbeiro...
+      } else if (role === "BARBER") {
+        // ...precisamos encontrar o ID do perfil de barbeiro dele
+        const barber = await this.prisma.barber.findUnique({
+          where: { userId: userId },
+          select: { id: true },
+        });
+
+        // Se não tiver perfil de barbeiro, não tem feedbacks
+        if (!barber) {
+          return [];
+        }
+        // Define o filtro para buscar pelo barberId
+        whereClause = { barberId: barber.id };
+      } else {
+        // 3. Se a role for desconhecida (ex: 'admin')
+        throw new UnauthorizedException("Cargo de usuário inválida para esta ação.");
+      }
+
+      // 4. Executa a busca na tabela FeedBack com o filtro correto
       const feedbacks = await this.prisma.feedBack.findMany({
-        where: {
-          clientId: clientId,
-        },
+        where: whereClause, // Usa o filtro dinâmico
         select: {
           id: true,
           comment: true,
@@ -117,13 +151,20 @@ export class FeedbackService {
           client: { select: { user: { select: { name: true, id: true } } } },
           barber: { select: { user: { select: { name: true, id: true } } } },
         },
+        orderBy: {
+          id: "desc",
+        },
       });
+
       return feedbacks;
     } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error; // Repassa o erro de autorização
+      }
+      console.error("Erro ao buscar feedbacks:", error); // Loga o erro real
       throw new HttpException("Ocorreu um erro ao buscar os feedbacks.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
   /**
    * Encontra um feedback específico pelo ID.
    * @param id - O ID do feedback a ser encontrado.
