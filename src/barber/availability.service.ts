@@ -39,7 +39,7 @@ export class AvailabilityService {
       if (services.length !== serviceIds.length) throw new HttpException("Serviços invalidos", HttpStatus.BAD_REQUEST);
       const totalDuration = services.reduce((sum, s) => sum + s.duration, 0);
       console.log(`Duração total calculada: ${totalDuration} minutos`);
-      console.log(barberId);
+      console.log("Barber Id: ", barberId);
       const dayStart = dayjs(date).tz(TIMEZONE).startOf("day").toDate();
       const dayEnd = dayjs(date).tz(TIMEZONE).endOf("day").toDate();
 
