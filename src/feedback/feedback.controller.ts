@@ -30,8 +30,9 @@ export class FeedbackController {
   @UseGuards(JwtAuthGuard)
   @Get("me")
   getMyFeedbacks(@Request() req) {
-    const userId = req.user.userId; // Pega o ID do usuário do token JWT
-    return this.feedbackService.findMyFeedBack(userId);
+    const userId = req.user.userId;
+    const role = req.user.role; // Pega o ID do usuário do token JWT
+    return this.feedbackService.findFeedbacksByUser(userId, role);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
