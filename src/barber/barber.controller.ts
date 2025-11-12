@@ -124,7 +124,7 @@ export class BarberController {
     @Query("date") date: string,
     @Query("serviceIds", new ParseArrayPipe({ items: Number, separator: "," })) serviceIds: number[]
   ) {
-  
+      console.log(barberId)
     return this.availabilityService.getAvailableSlots(barberId, date, serviceIds);
   }
 
