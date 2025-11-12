@@ -42,7 +42,6 @@ export class FeedbackService {
       return newFeedback;
     } catch (error) {
       if (error.code === "P2002") {
-        alert("Você já avaliou este profissional.");
         throw new ConflictException("Você já avaliou este profissional.");
       }
 
