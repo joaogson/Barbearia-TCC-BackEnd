@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateFeedbackDto } from "./dto/create-feedback.dto";
@@ -41,6 +41,10 @@ export class FeedbackService {
       console.log(newFeedback);
       return newFeedback;
     } catch (error) {
+      if (error.code === "P2002") {
+        throw new ConflictException("Você já avaliou este profissional.");
+      }
+
       console.error(error);
       // Trata erros de chave estrangeira (ex: barberId ou clientId não existem)
       throw new HttpException("Não foi possível registrar o feedback.", HttpStatus.INTERNAL_SERVER_ERROR);
