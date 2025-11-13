@@ -33,8 +33,8 @@ export class AvailabilityService {
       const dayStart = toDate(`${date} 00:00:00`, { timeZone: TIMEZONE });
       const dayEnd = toDate(`${date} 23:59:59`, { timeZone: TIMEZONE });
 
-      console.log("Availability Service - dayStart: ", dayStart);
-      console.log("Availability Service - dayEnd: ", dayEnd);
+      console.log("Availability Service - dayStart (Local SP): ", format(toZonedTime(dayStart, TIMEZONE), 'yyyy-MM-dd HH:mm:ssXXX'));
+      console.log("Availability Service - dayEnd (Local SP): ", format(toZonedTime(dayEnd, TIMEZONE), 'yyyy-MM-dd HH:mm:ssXXX'));
       //2. Buscar todas as restrições de horarios do barbeiro no dia
       const [barber, costumerServices, inactivePeriods] = await Promise.all([
         this.prisma.barber.findUnique({ where: { id: barberId } }),
@@ -43,8 +43,8 @@ export class AvailabilityService {
       ]);
 
       console.log("Availability Service - Barbeiro: ", barber);
-      console.log("Availability Service - Agendamentos encontrados neste dia:", costumerServices);
-      console.log("Availability Service - Períodos inativos encontrados neste dia:", inactivePeriods);
+      console.log("Availability Service - Agendamentos encontrados:", costumerServices);
+      console.log("Availability Service - Períodos inativos encontrados:", inactivePeriods);
 
       if (!barber) throw new HttpException("Não foi possivel encontrar o barbeiro", HttpStatus.NOT_FOUND);
 
@@ -64,8 +64,8 @@ export class AvailabilityService {
       const workStart = dayjs(toDate(workStartString, {timeZone: TIMEZONE}));
       const workEnd = dayjs(toDate(workEndString, {timeZone: TIMEZONE}));
 
-      console.log("Availability Service - workStartDay ", workStart);
-      console.log(`Availability Service - workEnd ${workEnd}`);
+      console.log("Availability Service - workStart (Local): ", format(toZonedTime(workStart.toDate(), TIMEZONE), 'HH:mm'));
+      console.log(`Availability Service - workEnd (Local) ${format(toZonedTime(workEnd.toDate(), TIMEZONE), 'HH:mm')}`);
 
       //3. Gerar os slots de horarios
       const slots: dayjs.Dayjs[] = [];
@@ -98,7 +98,15 @@ export class AvailabilityService {
           const periodStart = dayjs(toDate(periodStartString, {timeZone:TIMEZONE}));
           const periodEnd = dayjs(toDate(periodEndString, {timeZone: TIMEZONE}));
           
-          console.log(`Availability Service - Inicio do horario: ${slot} é antes de ${periodEnd} e o termino do horario: ${slotEnd} é depois de ${periodStart}`);
+
+          // --- Log (Traduzido para GMT-3 para ser legível) ---
+          // função helper 'formatLocal'
+          const formatLocal = (dt) => format(toZonedTime(dt.toDate(), TIMEZONE), 'HH:mm');
+          console.log(
+            `Availability Service - Verificando Slot [${formatLocal(slot)} - ${formatLocal(slotEnd)}] ` +
+            `contra Período Inativo [${formatLocal(periodStart)} - ${formatLocal(periodEnd)}]`
+          );
+           // FIM DO LOG
 
           return slot.isBefore(periodEnd) && slotEnd.isAfter(periodStart);
         });
@@ -114,7 +122,8 @@ export class AvailabilityService {
           const existingCostumerServiceDuration = c.totalDuration + breakTime;
           const costumerServiceEnd = costumerServiceStart.add(existingCostumerServiceDuration, "minute");
 
-          console.log(`Availability Service - Horario de inicio do agendamento: ${costumerServiceStart.hour()} ${costumerServiceStart.minute()} Horario de termino do agendamento: ${costumerServiceEnd.hour()} ${costumerServiceEnd.minute()}`);
+
+          console.log(`Availability Service - Checando conflito com agendamento (Local): ${format(toZonedTime(c.ServiceTime, TIMEZONE), 'HH:mm')}`);
 
           return slot.isBefore(costumerServiceEnd) && slotEnd.isAfter(costumerServiceStart);
         });
