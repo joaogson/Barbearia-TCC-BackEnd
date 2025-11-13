@@ -64,8 +64,8 @@ model InactivePeriod {
   date DateTime
   startTime String
   endTime String
-  barbedId Int
-  barber Barber @relation(fields: [barbedId], references: [id])
+  barberId Int
+  barber Barber @relation(fields: [barberId], references: [id])
 }
 
 model Client {
