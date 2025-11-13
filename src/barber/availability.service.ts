@@ -42,6 +42,8 @@ export class AvailabilityService {
       console.log("Barber Id: ", barberId);
       const dayStart = dayjs.tz(date, TIMEZONE).startOf("day").toDate();
       const dayEnd = dayjs.tz(date, TIMEZONE).endOf("day").toDate();
+      console.log("DayStart: ", dayStart);
+      console.log("dayEnd: ", dayEnd);
 
       //2. Buscar todas as restrições de horarios do barbeiro no dia
       const [barber, costumerServices, inactivePeriods] = await Promise.all([
