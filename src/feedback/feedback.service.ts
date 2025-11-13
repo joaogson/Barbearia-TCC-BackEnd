@@ -31,7 +31,7 @@ export class FeedbackService {
     if (!barber) {
       throw new HttpException("Barbeiro não encontrado", HttpStatus.NOT_FOUND);
     }
-    console.log("client: ", client);
+    console.log("client:  ", client);
     console.log("barber: ", barber);
     try {
       // Suposição: O DTO de criação terá rating, comment, barberId e clientId.
