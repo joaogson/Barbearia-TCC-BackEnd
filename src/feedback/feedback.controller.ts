@@ -15,8 +15,6 @@ export class FeedbackController {
   @Post()
   create(@Request() req, @Body() createFeedbackDto: CreateFeedbackDto) {
     const userId = req.user.userId;
-    console.log("client: ", req.user);
-    console.log(createFeedbackDto);
     return this.feedbackService.create(createFeedbackDto, userId);
   }
 
