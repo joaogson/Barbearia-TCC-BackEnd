@@ -120,7 +120,7 @@ export class AvailabilityService {
       console.log("Horários disponíveis FINAIS:", availableSlots);
       console.log("--- FIM DO CÁLCULO ---");
 
-      return availableSlots.map((slot) => slot.toISOString());
+      return availableSlots.map((slot) => slot.format());
     } catch (error) {
       console.error(error);
       throw new HttpException("Não foi possivel resgatar os horarios disponiveis", HttpStatus.BAD_REQUEST);
