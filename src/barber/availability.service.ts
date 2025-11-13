@@ -30,9 +30,8 @@ export class AvailabilityService {
       console.log(`Availability Service - Duração total calculada: ${totalDuration} minutos`);
       console.log("Availability Service - Barber Id: ", barberId);
 
-      const zonedDate = toDate(date, {timeZone: TIMEZONE});
-      const dayStart = dayjs(zonedDate).startOf("day").toDate();
-      const dayEnd = dayjs(zonedDate).endOf("day").toDate();
+      const dayStart = toDate(`${date} 00:00:00`, { timeZone: TIMEZONE });
+      const dayEnd = toDate(`${date} 23:59:59`, { timeZone: TIMEZONE });
 
       console.log("Availability Service - dayStart: ", dayStart);
       console.log("Availability Service - dayEnd: ", dayEnd);
