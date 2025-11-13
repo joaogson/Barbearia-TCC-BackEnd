@@ -25,8 +25,11 @@ export class FeedbackService {
       },
     });
 
-    if (!client && !barber) {
-      throw new HttpException("Cliente e Barbeiro não encontrados", HttpStatus.NOT_FOUND);
+    if (!client) {
+      throw new HttpException("Cliente não encontrado", HttpStatus.NOT_FOUND);
+    }
+    if (!barber) {
+      throw new HttpException("Barbeiro não encontrado", HttpStatus.NOT_FOUND);
     }
     console.log("client: ", client);
     console.log("barber: ", barber);
@@ -37,7 +40,7 @@ export class FeedbackService {
           rating: createFeedbackDto.rating,
           comment: createFeedbackDto.comment,
           barberId: createFeedbackDto.barberId,
-          clientId: createFeedbackDto.barberId,
+          clientId: client?.id,
         },
       });
       console.log("new feedback", newFeedback);
