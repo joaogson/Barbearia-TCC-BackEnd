@@ -92,7 +92,7 @@ export class AvailabilityService {
         const isInactive = inactivePeriods.some((p) => {
           const periodStart = dayjs(`${date} ${p.startTime}`, "YYYY-MM-DD HH:mm").tz(TIMEZONE);
           const periodEnd = dayjs(`${date} ${p.endTime}`, "YYYY-MM-DD HH:mm").tz(TIMEZONE);
-          console.log(`Inicio do horario: ${slot} é antes de ${periodEnd} e o termino do horario ${slotEnd} é depois de ${periodStart}`);
+          console.log(`Inicio do horario: ${slot} é antes de ${periodEnd} e o termino do horario: ${slotEnd} é depois de ${periodStart}`);
 
           return slot.isBefore(periodEnd) && slotEnd.isAfter(periodStart);
         });
