@@ -42,9 +42,9 @@ export class AvailabilityService {
         this.prisma.inactivePeriod.findMany({ where: { barbedId: barberId, date: { gte: dayStart, lte: dayEnd } } }),
       ]);
 
-      console.log("Availability Service - Barbeiro: ", barber);
-      console.log("Availability Service - Agendamentos encontrados:", costumerServices);
-      console.log("Availability Service - Períodos inativos encontrados:", inactivePeriods);
+//       console.log("Availability Service - Barbeiro: ", barber);
+//       console.log("Availability Service - Agendamentos encontrados:", costumerServices);
+//       console.log("Availability Service - Períodos inativos encontrados:", inactivePeriods);
 
       if (!barber) throw new HttpException("Não foi possivel encontrar o barbeiro", HttpStatus.NOT_FOUND);
 
@@ -122,8 +122,12 @@ export class AvailabilityService {
           const existingCostumerServiceDuration = c.totalDuration + breakTime;
           const costumerServiceEnd = costumerServiceStart.add(existingCostumerServiceDuration, "minute");
 
+          // --- Log
+    const localStart = format(toZonedTime(c.ServiceTime, TIMEZONE), 'HH:mm');
+    const localEnd = format(toZonedTime(costumerServiceEnd.toDate(), TIMEZONE), 'HH:mm');
 
-          console.log(`Availability Service - Checando conflito com agendamento (Local): ${format(toZonedTime(c.ServiceTime, TIMEZONE), 'HH:mm')}`);
+    console.log(`Availability Service - Checando conflito com agendamento (Local) das: ${localStart} às ${localEnd}`);
+
 
           return slot.isBefore(costumerServiceEnd) && slotEnd.isAfter(costumerServiceStart);
         });
