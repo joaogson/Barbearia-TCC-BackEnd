@@ -43,6 +43,8 @@ export class AvailabilityService {
       const dayStart = dayjs(date).tz(TIMEZONE).startOf("day").toDate();
       const dayEnd = dayjs(date).tz(TIMEZONE).endOf("day").toDate();
 
+      console.log("dayStart: ", dayStart);
+      console.log("dayEnd: ", dayEnd);
       //2. Buscar todas as restrições de horarios do barbeiro no dia
       const [barber, costumerServices, inactivePeriods] = await Promise.all([
         this.prisma.barber.findUnique({ where: { id: barberId } }),
