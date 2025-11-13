@@ -40,8 +40,8 @@ export class AvailabilityService {
       const totalDuration = services.reduce((sum, s) => sum + s.duration, 0);
       console.log(`Availability Service - Duração total calculada: ${totalDuration} minutos`);
       console.log("Availability Service - Barber Id: ", barberId);
-      const dayStart = dayjs(date).tz(TIMEZONE).startOf("day").toDate();
-      const dayEnd = dayjs(date).tz(TIMEZONE).endOf("day").toDate();
+      const dayStart = dayjs.tz(date, TIMEZONE).startOf("day").toDate();
+      const dayEnd = dayjs.tz(date, TIMEZONE).endOf("day").toDate();
 
       console.log("Availability Service - dayStart: ", dayStart);
       console.log("Availability Service - dayEnd: ", dayEnd);
