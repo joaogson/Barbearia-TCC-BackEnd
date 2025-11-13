@@ -3,12 +3,16 @@ import { format, toDate } from "date-fns-tz";
 import { PrismaService } from "src/prisma/prisma.service";
 
 // --- CONFIGURAÇÃO DO DAY.JS ---
-import dayjs from "dayjs";
+import dayjs from "dayjs"; // O import default funciona para o dayjs
+
+// ✅ CORREÇÃO: Use 'require' para os plugins
+// Isso resolve o erro TS(2345) em ambientes NestJS/CommonJS
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import isBetween from "dayjs/plugin/isBetween";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 
+// Aplique os plugins (isso agora vai funcionar)
 dayjs.extend(customParseFormat);
 dayjs.extend(isBetween);
 dayjs.extend(utc);
