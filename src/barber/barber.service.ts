@@ -6,6 +6,9 @@ import { Role } from "generated/prisma/client";
 import { updateSettingsDto } from "./dto/update-barber.dto";
 import { CreateInactivePeriodDto } from "./dto/create-inactive-period.dto";
 import { Console } from "console";
+import { toDate } from "date-fns-tz";
+
+export const TIMEZONE = "America/Sao_Paulo";
 
 @Injectable()
 export class BarberService {
@@ -122,9 +125,13 @@ export class BarberService {
 
       if (createInactivePeriodDto.startTime > createInactivePeriodDto.endTime)
         throw new HttpException("O horario de inicio deve ser maior que o de final!", HttpStatus.BAD_REQUEST);
+
+
+      const dateToSave = toDate(createInactivePeriodDto.date, { timeZone: TIMEZONE });
+      
       return this.prisma.inactivePeriod.create({
         data: {
-          date: new Date(createInactivePeriodDto.date),
+          date: dateToSave,
           startTime: createInactivePeriodDto.startTime,
           endTime: createInactivePeriodDto.endTime,
           barber: {
