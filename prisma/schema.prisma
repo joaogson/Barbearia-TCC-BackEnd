@@ -96,7 +96,6 @@ model FeedBack {
   clientId Int 
   barber   Barber @relation(fields: [barberId], references: [id])
   barberId Int    
-  @@unique([clientId,barberId])
 }
 
 model CostumerService{

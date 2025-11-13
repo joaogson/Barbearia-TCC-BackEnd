@@ -14,10 +14,10 @@ export class FeedbackController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Request() req, @Body() createFeedbackDto: CreateFeedbackDto) {
-    const clientId = req.user.userId;
+    const userId = req.user.userId;
     console.log("client: ", req.user);
     console.log(createFeedbackDto);
-    return this.feedbackService.create(createFeedbackDto, clientId);
+    return this.feedbackService.create(createFeedbackDto, userId);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

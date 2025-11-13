@@ -12,7 +12,7 @@ export class FeedbackService {
    * Cria um novo feedback no banco de dados.
    * @param createFeedbackDto - Dados para a criação do feedback.
    */
-  async create(createFeedbackDto: CreateFeedbackDto, clientId: number) {
+  async create(createFeedbackDto: CreateFeedbackDto, userId: number) {
     const barber = await this.prisma.barber.findUnique({
       where: {
         id: createFeedbackDto.barberId,
@@ -21,7 +21,7 @@ export class FeedbackService {
 
     const client = await this.prisma.client.findUnique({
       where: {
-        userId: clientId,
+        userId: userId,
       },
     });
 
