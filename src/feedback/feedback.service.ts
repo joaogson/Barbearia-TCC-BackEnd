@@ -43,11 +43,11 @@ export class FeedbackService {
       console.log("new feedback", newFeedback);
       return newFeedback;
     } catch (error) {
+      console.error(error);
       if (error.code === "P2002") {
         throw new HttpException("Você já avaliou este profissional.", HttpStatus.CONFLICT);
       }
 
-      console.error(error);
       // Trata erros de chave estrangeira (ex: barberId ou clientId não existem)
       throw new HttpException("Não foi possível registrar o feedback.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
