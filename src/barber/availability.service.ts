@@ -92,6 +92,7 @@ export class AvailabilityService {
         const isInactive = inactivePeriods.some((p) => {
           const periodStart = dayjs(`${date} ${p.startTime}`, "YYYY-MM-DD HH:mm").tz(TIMEZONE);
           const periodEnd = dayjs(`${date} ${p.endTime}`, "YYYY-MM-DD HH:mm").tz(TIMEZONE);
+          console.log(`Inicio do horario: ${slot} é antes de ${periodEnd} e o termino do horario ${slotEnd} é depois de ${periodStart}`);
 
           return slot.isBefore(periodEnd) && slotEnd.isAfter(periodStart);
         });
@@ -104,8 +105,8 @@ export class AvailabilityService {
           const costumerServiceStart = dayjs(c.ServiceTime).tz(TIMEZONE);
           const existingCostumerServiceDuration = c.totalDuration + breakTime;
           const costumerServiceEnd = costumerServiceStart.add(existingCostumerServiceDuration, "minute");
-          console.log(`Horario de inicio do agendamento: ${costumerServiceStart.hour()} ${costumerServiceStart.minute()} `);
-          console.log(`Horario de termino do agendamento: ${costumerServiceEnd.hour()} ${costumerServiceEnd.minute()} `);
+          //console.log(`Horario de inicio do agendamento: ${costumerServiceStart.hour()} ${costumerServiceStart.minute()} `);
+          //console.log(`Horario de termino do agendamento: ${costumerServiceEnd.hour()} ${costumerServiceEnd.minute()} `);
           return slot.isBefore(costumerServiceEnd) && slotEnd.isAfter(costumerServiceStart);
         });
 
