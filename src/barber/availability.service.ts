@@ -42,8 +42,6 @@ export class AvailabilityService {
       console.log("Barber Id: ", barberId);
       const dayStart = dayjs.tz(date, TIMEZONE).startOf("day").toDate();
       const dayEnd = dayjs.tz(date, TIMEZONE).endOf("day").toDate();
-      console.log("DayStart: ", dayStart);
-      console.log("dayEnd: ", dayEnd);
 
       //2. Buscar todas as restrições de horarios do barbeiro no dia
       const [barber, costumerServices, inactivePeriods] = await Promise.all([
@@ -70,7 +68,8 @@ export class AvailabilityService {
       const startDay = dayjs.tz(date, TIMEZONE).startOf("day");
       const workStart = dayjs(`${date} ${barber.workStartTime}`, "YYYY-MM-DD HH:mm", TIMEZONE);
       const workEnd = dayjs(`${date} ${barber.workEndTime}`, "YYYY-MM-DD HH:mm", TIMEZONE);
-
+      console.log("workStarDay ", workStart);
+      console.log(`workEnd ${workEnd}`);
       //3. Gerar os slots de horarios
       const slots: dayjs.Dayjs[] = [];
 
