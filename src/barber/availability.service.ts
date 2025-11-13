@@ -50,6 +50,7 @@ export class AvailabilityService {
         this.prisma.inactivePeriod.findMany({ where: { barbedId: barberId, date: { gte: dayStart, lte: dayEnd } } }),
       ]);
 
+      console.log("Barbeiro: ", barber);
       console.log("Agendamentos encontrados neste dia:", costumerServices);
       console.log("Períodos inativos encontrados neste dia:", inactivePeriods);
 
@@ -79,7 +80,7 @@ export class AvailabilityService {
         slots.push(currentSlot);
         currentSlot = currentSlot.add(interval, "minute");
       }
-      console.log(slots);
+      //console.log(slots);
       //4. Filtrar os slots validos, aplicando as regras
       //de verificação se o serviço vai adentrar em algum horario
       // invalido para atendimento, seja no começo do horario ou no final
@@ -91,6 +92,7 @@ export class AvailabilityService {
         if (slotEnd.isAfter(workEnd)) return false;
 
         //Conflita com um periodo invalido
+        console.log("PERIODOS INATIVOS: ");
         const isInactive = inactivePeriods.some((p) => {
           const periodStart = dayjs(`${date} ${p.startTime}`, "YYYY-MM-DD HH:mm", TIMEZONE);
           const periodEnd = dayjs(`${date} ${p.endTime}`, "YYYY-MM-DD HH:mm", TIMEZONE);
@@ -103,6 +105,7 @@ export class AvailabilityService {
         }
 
         // Conflita com outro agendamento existente
+        console.log("OUTROS ATENDIMENTOS: ");
         const inCostumerService = costumerServices.some((c) => {
           const costumerServiceStart = dayjs(c.ServiceTime).tz(TIMEZONE);
           const existingCostumerServiceDuration = c.totalDuration + breakTime;
