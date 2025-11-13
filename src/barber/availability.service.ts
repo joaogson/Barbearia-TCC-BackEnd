@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { format, toDate } from "date-fns-tz";
+import { format, toDate, toZonedTime } from "date-fns-tz";
 import { PrismaService } from "src/prisma/prisma.service";
 
 // --- CONFIGURAÇÃO DO DAY.JS ---
@@ -113,7 +113,10 @@ export class AvailabilityService {
         // Conflita com outro agendamento existente
         console.log("OUTROS ATENDIMENTOS: ");
         const inCostumerService = costumerServices.some((c) => {
-          const costumerServiceStart = dayjs(c.ServiceTime).tz(TIMEZONE);
+
+          const zonedTime = toZonedTime(c.ServiceTime, TIMEZONE);
+
+          const costumerServiceStart = dayjs(zonedTime)
           const existingCostumerServiceDuration = c.totalDuration + breakTime;
           const costumerServiceEnd = costumerServiceStart.add(existingCostumerServiceDuration, "minute");
           console.log(`Availability Service - Horario de inicio do agendamento: ${costumerServiceStart.hour()} ${costumerServiceStart.minute()} Horario de termino do agendamento: ${costumerServiceEnd.hour()} ${costumerServiceEnd.minute()}`);
