@@ -14,6 +14,10 @@ dayjs.extend(timezone);
 // Defina o fuso padrão de TODO o back-end para o fuso da barbearia
 dayjs.tz.setDefault("America/Sao_Paulo"); 
 
+// 👇 ADICIONE ESTAS LINHAS DE "PROVA" 👇
+console.log("--- [DEPLOY PROVA] DAY.JS CONFIGURADO NO MAIN.TS ---");
+console.log(`--- [DEPLOY PROVA] FUSO PADRÃO AGORA É: ${dayjs.tz.guess()} ---`);
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
