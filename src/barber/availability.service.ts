@@ -40,8 +40,8 @@ export class AvailabilityService {
       const totalDuration = services.reduce((sum, s) => sum + s.duration, 0);
       console.log(`Duração total calculada: ${totalDuration} minutos`);
       console.log("Barber Id: ", barberId);
-      const dayStart = dayjs.tz(date).startOf("day").toDate();
-      const dayEnd = dayjs.tz(date).endOf("day").toDate();
+      const dayStart = dayjs.tz(date, TIMEZONE).startOf("day").toDate();
+      const dayEnd = dayjs.tz(date, TIMEZONE).endOf("day").toDate();
 
       //2. Buscar todas as restrições de horarios do barbeiro no dia
       const [barber, costumerServices, inactivePeriods] = await Promise.all([
@@ -65,9 +65,9 @@ export class AvailabilityService {
       });
 
       // 3. Definir o início e fim do expediente como objetos Day.js
-      const startDay = dayjs.tz(date).startOf("day");
-      const workStart = dayjs(`${date} ${barber.workStartTime}`, "YYYY-MM-DD HH:mm");
-      const workEnd = dayjs(`${date} ${barber.workEndTime}`, "YYYY-MM-DD HH:mm");
+      const startDay = dayjs.tz(date, TIMEZONE).startOf("day");
+      const workStart = dayjs(`${date} ${barber.workStartTime}`, "YYYY-MM-DD HH:mm", TIMEZONE);
+      const workEnd = dayjs(`${date} ${barber.workEndTime}`, "YYYY-MM-DD HH:mm", TIMEZONE);
 
       //3. Gerar os slots de horarios
       const slots: dayjs.Dayjs[] = [];
@@ -91,8 +91,8 @@ export class AvailabilityService {
 
         //Conflita com um periodo invalido
         const isInactive = inactivePeriods.some((p) => {
-          const periodStart = dayjs(`${date} ${p.startTime}`, "YYYY-MM-DD HH:mm");
-          const periodEnd = dayjs(`${date} ${p.endTime}`, "YYYY-MM-DD HH:mm");
+          const periodStart = dayjs(`${date} ${p.startTime}`, "YYYY-MM-DD HH:mm", TIMEZONE);
+          const periodEnd = dayjs(`${date} ${p.endTime}`, "YYYY-MM-DD HH:mm", TIMEZONE);
           console.log(`Inicio do horario: ${slot} é antes de ${periodEnd} e o termino do horario: ${slotEnd} é depois de ${periodStart}`);
 
           return slot.isBefore(periodEnd) && slotEnd.isAfter(periodStart);
@@ -103,7 +103,7 @@ export class AvailabilityService {
 
         // Conflita com outro agendamento existente
         const inCostumerService = costumerServices.some((c) => {
-          const costumerServiceStart = dayjs(c.ServiceTime);
+          const costumerServiceStart = dayjs(c.ServiceTime).tz(TIMEZONE);
           const existingCostumerServiceDuration = c.totalDuration + breakTime;
           const costumerServiceEnd = costumerServiceStart.add(existingCostumerServiceDuration, "minute");
           //console.log(`Horario de inicio do agendamento: ${costumerServiceStart.hour()} ${costumerServiceStart.minute()} `);
