@@ -5,7 +5,7 @@ export class inactivePeriods {
   date: Date;
   startTime: string;
   endTime: string;
-  barberId: number;
+  barbedId: number;
   barber: Barber;
 }
 

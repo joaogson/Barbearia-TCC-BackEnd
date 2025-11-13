@@ -47,7 +47,7 @@ export class AvailabilityService {
       const [barber, costumerServices, inactivePeriods] = await Promise.all([
         this.prisma.barber.findUnique({ where: { id: barberId } }),
         this.prisma.costumerService.findMany({ where: { barberId: barberId, ServiceTime: { gte: dayStart, lte: dayEnd }, isCancelled: false } }),
-        this.prisma.inactivePeriod.findMany({ where: { barberId: barberId, date: { gte: dayStart, lte: dayEnd } } }),
+        this.prisma.inactivePeriod.findMany({ where: { barbedId: barberId, date: { gte: dayStart, lte: dayEnd } } }),
       ]);
 
       console.log("Barbeiro: ", barber);

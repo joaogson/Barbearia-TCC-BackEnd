@@ -18,7 +18,7 @@ export class CreateInactivePeriodDto {
   endTime: string;
 
   @IsNumber()
-  barberId: number;
+  babedId: number;
 
   barber: Barber;
 }

@@ -154,7 +154,7 @@ export class BarberService {
       console.log("End Date", endDate);
       return this.prisma.inactivePeriod.findMany({
         where: {
-          barberId: barber.id,
+          barbedId: barber.id,
           date: {
             gte: startDate, // gte = Greater Than or Equal (maior ou igual a)
             lte: endDate, // lte = Less Than or Equal (menor ou igual a)
@@ -173,7 +173,7 @@ export class BarberService {
       if (!barber) throw new NotFoundException("Barbeiro não encontrado.");
       // Verificação de segurança: garante que o barbeiro só pode deletar seus próprios períodos
       const period = await this.prisma.inactivePeriod.findFirst({
-        where: { id: id, barberId: barber.id },
+        where: { id: id, barbedId: barber.id },
       });
 
       if (!period) {
