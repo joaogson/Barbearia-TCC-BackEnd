@@ -71,13 +71,14 @@ export class AvailabilityService {
 
       //3. Gerar os slots de horarios
       const slots: dayjs.Dayjs[] = [];
+
       const interval = 15;
       let currentSlot = workStart;
       while (currentSlot.isBefore(workEnd)) {
         slots.push(currentSlot);
         currentSlot = currentSlot.add(interval, "minute");
       }
-
+      console.log(slots);
       //4. Filtrar os slots validos, aplicando as regras
       //de verificação se o serviço vai adentrar em algum horario
       // invalido para atendimento, seja no começo do horario ou no final
