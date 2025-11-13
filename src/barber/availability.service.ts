@@ -119,7 +119,7 @@ export class AvailabilityService {
         return true;
       });
 
-      console.log("Horários disponíveis FINAIS:", availableSlots);
+      //console.log("Horários disponíveis FINAIS:", availableSlots);
       console.log("--- FIM DO CÁLCULO ---");
 
       return availableSlots.map((slot) => slot.format());
