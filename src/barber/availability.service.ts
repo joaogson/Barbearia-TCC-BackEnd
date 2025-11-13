@@ -40,8 +40,8 @@ export class AvailabilityService {
       const totalDuration = services.reduce((sum, s) => sum + s.duration, 0);
       console.log(`Duração total calculada: ${totalDuration} minutos`);
       console.log("Barber Id: ", barberId);
-      const dayStart = dayjs.tz(date, TIMEZONE).startOf("day").toDate();
-      const dayEnd = dayjs.tz(date, TIMEZONE).endOf("day").toDate();
+      const dayStart = dayjs(date).tz(TIMEZONE).startOf("day").toDate();
+      const dayEnd = dayjs(date).tz(TIMEZONE).endOf("day").toDate();
 
       //2. Buscar todas as restrições de horarios do barbeiro no dia
       const [barber, costumerServices, inactivePeriods] = await Promise.all([
