@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { format, toDate, toZonedTime } from "date-fns-tz";
+import { format, toDate, toZonedTime,  } from "date-fns-tz";
 import { PrismaService } from "src/prisma/prisma.service";
 import dayjs from "dayjs";
 
@@ -30,7 +30,7 @@ export class AvailabilityService {
       console.log(`Availability Service - Duração total calculada: ${totalDuration} minutos`);
       console.log("Availability Service - Barber Id: ", barberId);
 
-      const zonedDate = toZonedTime(date, TIMEZONE);
+      const zonedDate = toDate(date, {timeZone: TIMEZONE});
       const dayStart = dayjs(zonedDate).startOf("day").toDate();
       const dayEnd = dayjs(zonedDate).endOf("day").toDate();
 
@@ -62,8 +62,8 @@ export class AvailabilityService {
       const workStartString = `${date} ${barber.workStartTime}`;
       const workEndString = `${date} ${barber.workEndTime}`
 
-      const workStart = dayjs(toZonedTime(workStartString, TIMEZONE));
-      const workEnd = dayjs(toZonedTime(workEndString, TIMEZONE));
+      const workStart = dayjs(toDate(workStartString, {timeZone: TIMEZONE}));
+      const workEnd = dayjs(toDate(workEndString, {timeZone: TIMEZONE}));
 
       console.log("Availability Service - workStartDay ", workStart);
       console.log(`Availability Service - workEnd ${workEnd}`);
@@ -96,8 +96,8 @@ export class AvailabilityService {
           const periodStartString = `${date} ${p.startTime}`
           const periodEndString = `${date} ${p.endTime}`
 
-          const periodStart = dayjs(toZonedTime(periodStartString, TIMEZONE));
-          const periodEnd = dayjs(toZonedTime(periodEndString, TIMEZONE));
+          const periodStart = dayjs(toDate(periodStartString, {timeZone:TIMEZONE}));
+          const periodEnd = dayjs(toDate(periodEndString, {timeZone: TIMEZONE}));
           
           console.log(`Availability Service - Inicio do horario: ${slot} é antes de ${periodEnd} e o termino do horario: ${slotEnd} é depois de ${periodStart}`);
 
@@ -111,8 +111,7 @@ export class AvailabilityService {
         console.log("OUTROS ATENDIMENTOS: ");
         const inCostumerService = costumerServices.some((c) => {
 
-          const zonedTime = toZonedTime(c.ServiceTime, TIMEZONE);
-          const costumerServiceStart = dayjs(zonedTime)
+          const costumerServiceStart = dayjs(c.ServiceTime)
           const existingCostumerServiceDuration = c.totalDuration + breakTime;
           const costumerServiceEnd = costumerServiceStart.add(existingCostumerServiceDuration, "minute");
 
@@ -131,7 +130,10 @@ export class AvailabilityService {
       //console.log("Horários disponíveis FINAIS:", availableSlots);
       console.log("--- FIM DO CÁLCULO ---");
 
-      return availableSlots.map((slot) => slot.format());
+      return availableSlots.map((slotUtc) =>{
+        const zonedSlot = toZonedTime(slotUtc.toDate(), TIMEZONE);
+        return dayjs(zonedSlot).format()
+      });
     } catch (error) {
       console.error(error);
       throw new HttpException("Não foi possivel resgatar os horarios disponiveis", HttpStatus.BAD_REQUEST);
