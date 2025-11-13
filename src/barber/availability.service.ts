@@ -1,23 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { format, toDate, toZonedTime } from "date-fns-tz";
 import { PrismaService } from "src/prisma/prisma.service";
+import dayjs from "dayjs";
 
-// --- CONFIGURAÇÃO DO DAY.JS ---
-import dayjs from "dayjs"; // O import default funciona para o dayjs
-
-// ✅ CORREÇÃO: Use 'require' para os plugins
-// Isso resolve o erro TS(2345) em ambientes NestJS/CommonJS
-import customParseFormat from "dayjs/plugin/customParseFormat";
-import isBetween from "dayjs/plugin/isBetween";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-
-// Aplique os plugins (isso agora vai funcionar)
-dayjs.extend(customParseFormat);
-dayjs.extend(isBetween);
-dayjs.extend(utc);
-dayjs.extend(timezone);
-// --- FIM DA CONFIGURAÇÃO ---
 
 export const TIMEZONE = "America/Sao_Paulo";
 
@@ -44,8 +29,10 @@ export class AvailabilityService {
       const totalDuration = services.reduce((sum, s) => sum + s.duration, 0);
       console.log(`Availability Service - Duração total calculada: ${totalDuration} minutos`);
       console.log("Availability Service - Barber Id: ", barberId);
-      const dayStart = dayjs.tz(date, TIMEZONE).startOf("day").toDate();
-      const dayEnd = dayjs.tz(date, TIMEZONE).endOf("day").toDate();
+
+      const zonedDate = toZonedTime(date, TIMEZONE);
+      const dayStart = dayjs(zonedDate).startOf("day").toDate();
+      const dayEnd = dayjs(zonedDate).endOf("day").toDate();
 
       console.log("Availability Service - dayStart: ", dayStart);
       console.log("Availability Service - dayEnd: ", dayEnd);
@@ -72,11 +59,15 @@ export class AvailabilityService {
       });
 
       // 3. Definir o início e fim do expediente como objetos Day.js
-      const startDay = dayjs.tz(date, TIMEZONE).startOf("day");
-      const workStart = dayjs(`${date} ${barber.workStartTime}`, "YYYY-MM-DD HH:mm", TIMEZONE);
-      const workEnd = dayjs(`${date} ${barber.workEndTime}`, "YYYY-MM-DD HH:mm", TIMEZONE);
+      const workStartString = `${date} ${barber.workStartTime}`;
+      const workEndString = `${date} ${barber.workEndTime}`
+
+      const workStart = dayjs(toZonedTime(workStartString, TIMEZONE));
+      const workEnd = dayjs(toZonedTime(workEndString, TIMEZONE));
+
       console.log("Availability Service - workStartDay ", workStart);
       console.log(`Availability Service - workEnd ${workEnd}`);
+
       //3. Gerar os slots de horarios
       const slots: dayjs.Dayjs[] = [];
 
@@ -99,9 +90,15 @@ export class AvailabilityService {
 
         //Conflita com um periodo invalido
         console.log("Availability Service - PERIODOS INATIVOS: ");
+
         const isInactive = inactivePeriods.some((p) => {
-          const periodStart = dayjs(`${date} ${p.startTime}`, "YYYY-MM-DD HH:mm", TIMEZONE);
-          const periodEnd = dayjs(`${date} ${p.endTime}`, "YYYY-MM-DD HH:mm", TIMEZONE);
+
+          const periodStartString = `${date} ${p.startTime}`
+          const periodEndString = `${date} ${p.endTime}`
+
+          const periodStart = dayjs(toZonedTime(periodStartString, TIMEZONE));
+          const periodEnd = dayjs(toZonedTime(periodEndString, TIMEZONE));
+          
           console.log(`Availability Service - Inicio do horario: ${slot} é antes de ${periodEnd} e o termino do horario: ${slotEnd} é depois de ${periodStart}`);
 
           return slot.isBefore(periodEnd) && slotEnd.isAfter(periodStart);
@@ -115,11 +112,12 @@ export class AvailabilityService {
         const inCostumerService = costumerServices.some((c) => {
 
           const zonedTime = toZonedTime(c.ServiceTime, TIMEZONE);
-
           const costumerServiceStart = dayjs(zonedTime)
           const existingCostumerServiceDuration = c.totalDuration + breakTime;
           const costumerServiceEnd = costumerServiceStart.add(existingCostumerServiceDuration, "minute");
+
           console.log(`Availability Service - Horario de inicio do agendamento: ${costumerServiceStart.hour()} ${costumerServiceStart.minute()} Horario de termino do agendamento: ${costumerServiceEnd.hour()} ${costumerServiceEnd.minute()}`);
+
           return slot.isBefore(costumerServiceEnd) && slotEnd.isAfter(costumerServiceStart);
         });
 
