@@ -33,7 +33,7 @@ export class AuthService {
     if (!IsPasswordMatching) throw new UnauthorizedException("Senha inválida");
 
     const payload = {
-      sub: user.id, // sub é o padrão do Jwt para o ID
+      sub: user.id, 
       role: user.role, // role para saber qual camada pode acessar
     };
 
