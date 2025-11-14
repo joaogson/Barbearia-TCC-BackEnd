@@ -42,7 +42,7 @@ export class FeedbackService {
           clientId: client?.id,
         },
       });
-      
+
       return newFeedback;
     } catch (error) {
       console.error(error);
@@ -85,6 +85,7 @@ export class FeedbackService {
           client: { select: { user: { select: { name: true, id: true } } } },
           barber: { select: { user: { select: { name: true, id: true } } } },
         },
+        take: 4,
       });
       return feedbacks;
     } catch (error) {
