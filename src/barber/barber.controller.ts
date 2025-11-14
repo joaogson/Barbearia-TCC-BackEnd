@@ -140,8 +140,6 @@ export class BarberController {
     return this.feedbackService.findMyBarberFeedBacks(userId);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Roles()
   @Get(":id/feedBack")
   findByBarber(@Param("id", ParseIntPipe) barberId: number) {
     return this.feedbackService.findByBarber(barberId);
