@@ -11,6 +11,7 @@ import { ServiceModule } from "src/service/service.module";
 import { BarberModule } from "src/barber/barber.module";
 import { AuthModule } from "src/auth/auth.module";
 import { MailerModule } from "@nestjs-modules/mailer";
+import * as nodemailerSendgrid from 'nodemailer-sendgrid';
 
 import { hostname } from "os";
 
@@ -26,17 +27,11 @@ import { hostname } from "os";
     CostumerServiceModule,
     ServiceModule,
     MailerModule.forRoot({
-      transport: {
-        host: process.env.SMTP_HOST, // ex: 'smtp.sendgrid.net'
-        port: parseInt(process.env.SMTP_PORT || "587", 10),
-        secure: false,
-        auth: {
-          user: process.env.SMTP_USER, // Usuário (ex: 'apikey')
-          pass: process.env.SMTP_PASS, // Senha (ex: sua API key do SendGrid)
-        },
-      },
+      transport: nodemailerSendgrid({
+        apiKey: process.env.SMTP_PASS,
+      }),
       defaults: {
-        from: '"Barbearia TCC" <joaogsonalio@gmail.com>',
+        from: '"Barbearia TCC" <entonigabriel@hotmail.com>',
       },
     }),
   ],
