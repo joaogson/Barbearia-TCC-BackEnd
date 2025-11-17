@@ -11,7 +11,7 @@ import { ServiceModule } from "src/service/service.module";
 import { BarberModule } from "src/barber/barber.module";
 import { AuthModule } from "src/auth/auth.module";
 import { MailerModule } from "@nestjs-modules/mailer";
-import * as nodemailerSendgrid from 'nodemailer-sendgrid';
+import nodemailerSendgrid from 'nodemailer-sendgrid';
 
 import { hostname } from "os";
 
