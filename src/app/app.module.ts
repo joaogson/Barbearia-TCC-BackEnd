@@ -31,7 +31,7 @@ import { hostname } from "os";
         apiKey: process.env.SMTP_PASS,
       }),
       defaults: {
-        from: '"Barbearia TCC" <entonigabriel@hotmail.com>',
+        from: '"Barbearia TCC" <joaogsonalio@gmail.com>',
       },
     }),
   ],
