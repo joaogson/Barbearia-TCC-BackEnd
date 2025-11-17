@@ -72,7 +72,7 @@ export class ClientService {
         select: {
           id: true,
           user: {
-            select: { name: true },
+            select: { name: true, phone: true },
           },
           plan: {
             select: { id: true, haircutNumber: true, value: true },
