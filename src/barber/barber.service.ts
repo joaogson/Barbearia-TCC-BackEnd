@@ -67,6 +67,7 @@ export class BarberService {
       select: {
         workStartTime: true,
         workEndTime: true,
+        breakBetweenCostumerService: true,
       },
     });
     return barber;
@@ -126,9 +127,8 @@ export class BarberService {
       if (createInactivePeriodDto.startTime > createInactivePeriodDto.endTime)
         throw new HttpException("O horario de inicio deve ser maior que o de final!", HttpStatus.BAD_REQUEST);
 
-
       const dateToSave = toDate(createInactivePeriodDto.date, { timeZone: TIMEZONE });
-      
+
       return this.prisma.inactivePeriod.create({
         data: {
           date: dateToSave,
