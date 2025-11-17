@@ -20,6 +20,11 @@ export class BarberService {
   async getAllBarbers() {
     try {
       const barbers = await this.prisma.barber.findMany({
+        where:{
+          id:{
+            not: 1
+          }
+        },
         include: {
           user: {
             select: {
