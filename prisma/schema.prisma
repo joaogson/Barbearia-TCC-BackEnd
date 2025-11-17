@@ -8,6 +8,7 @@
 enum Role{
   CLIENT
   BARBER
+  ADMIN
 }
 
 generator client {
