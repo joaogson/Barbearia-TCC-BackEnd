@@ -12,7 +12,7 @@ export class ServiceController {
   constructor(private readonly serviceService: ServiceService) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.ADMIN)
   @Post()
   create(@Body() createServiceDto: CreateServiceDto) {
     return this.serviceService.create(createServiceDto);
@@ -24,21 +24,21 @@ export class ServiceController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER, Role.CLIENT)
+  @Roles(Role.BARBER, Role.CLIENT, Role.ADMIN)
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.serviceService.findOne(+id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.ADMIN)
   @Patch(":id")
   update(@Param("id") id: string, @Body() updateServiceDto: UpdateServiceDto) {
     return this.serviceService.update(+id, updateServiceDto);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.ADMIN)
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.serviceService.remove(+id);

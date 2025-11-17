@@ -12,14 +12,14 @@ export class PlanController {
   constructor(private readonly planService: PlanService) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.ADMIN)
   @Post()
   create(@Body() createPlanDto: CreatePlanDto) {
     return this.planService.create(createPlanDto);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.ADMIN)
   @Get()
   findAll() {
     return this.planService.findAll();
@@ -32,14 +32,14 @@ export class PlanController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.ADMIN)
   @Patch(":id")
   update(@Param("id") id: string, @Body() updatePlanDto: UpdatePlanDto) {
     return this.planService.update(+id, updatePlanDto);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.ADMIN)
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.planService.remove(+id);

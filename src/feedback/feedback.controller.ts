@@ -19,7 +19,7 @@ export class FeedbackController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.ADMIN)
   @Get()
   findAll() {
     return this.feedbackService.findAll();
@@ -34,21 +34,21 @@ export class FeedbackController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.ADMIN)
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.feedbackService.findOne(+id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.ADMIN)
   @Patch(":id")
   update(@Param("id") id: string, @Body() updateFeedbackDto: UpdateFeedbackDto) {
     return this.feedbackService.update(+id, updateFeedbackDto);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.CLIENT)
+  @Roles(Role.CLIENT, Role.ADMIN)
   @Delete(":id")
   remove(@Param("id") id: number) {
     return this.feedbackService.remove(+id);

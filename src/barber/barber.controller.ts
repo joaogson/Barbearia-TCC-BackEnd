@@ -102,7 +102,7 @@ export class BarberController {
   @UseGuards(JwtAuthGuard)
   getInactivePeriods(@Request() req, @Query("date") date: string) {
     const userId = req.user.userId;
-    
+
     return this.barberService.getInactivePeriodsByDate(userId, date);
   }
 
@@ -112,7 +112,7 @@ export class BarberController {
   @Roles(Role.BARBER)
   deleteInactivePeriod(@Request() req, @Param("id", ParseIntPipe) id: number) {
     const userId = req.user.userId;
-    
+
     return this.barberService.deleteInactivePeriods(id, userId);
   }
 
@@ -124,13 +124,13 @@ export class BarberController {
     @Query("date") date: string,
     @Query("serviceIds", new ParseArrayPipe({ items: Number, separator: "," })) serviceIds: number[]
   ) {
-      console.log("Availability - BarberId: ", barberId)
+    console.log("Availability - BarberId: ", barberId);
     return this.availabilityService.getAvailableSlots(barberId, date, serviceIds);
   }
 
   @Get("me/interval")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.ADMIN)
   getInterval(@Request() req) {}
 
   @UseGuards(JwtAuthGuard)

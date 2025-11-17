@@ -15,7 +15,7 @@ export class ClientController {
 
   @Patch("profile")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.CLIENT)
+  @Roles(Role.CLIENT, Role.ADMIN)
   updateMyProfile(@Request() req, @Body(ValidationPipe) updateClientDto: UpdateClientDto) {
     const userId = req.user.userId;
     return this.clientService.updateClient(userId, updateClientDto);
@@ -23,7 +23,7 @@ export class ClientController {
 
   @Get("me")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.CLIENT)
+  @Roles(Role.CLIENT, Role.ADMIN)
   getMyProfile(@Request() req) {
     const userId = req.user.userId;
     return this.clientService.getClient(userId);
@@ -31,7 +31,7 @@ export class ClientController {
 
   @Get("my-plan")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.CLIENT)
+  @Roles(Role.CLIENT, Role.ADMIN)
   getMyPlan(@Request() req) {
     const userId = req.user.userId;
     const plan = this.clientService.getMyPlan(userId);
@@ -39,21 +39,21 @@ export class ClientController {
 
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.ADMIN)
   getClients(@Request() req) {
     return this.getClients(req);
   }
 
   @Get("management")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.ADMIN)
   findAllForManagement() {
     return this.clientService.getClientsForPlan();
   }
 
   @Patch(":clientId/plan")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER)
+  @Roles(Role.BARBER, Role.ADMIN)
   updatePlan(@Param("clientId", ParseIntPipe) clientId: number, @Body() body: UpdateClientPlanDto) {
     return this.clientService.updateClientPlan(clientId, body.planId);
   }
