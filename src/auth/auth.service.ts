@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { RegisterAuthDto } from "./dto/register-auth.dto";
 import { LoginAuthDto } from "./dto/login-auth.dto";
-import { UserService } from "src/user/user.service";
+import { UserService } from "../user/user.service";
 import { JwtService } from "@nestjs/jwt";
 import * as crypto from "crypto"; // Módulo nativo do Node.js
 import * as bcrypt from "bcrypt";
