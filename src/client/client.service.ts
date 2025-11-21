@@ -101,6 +101,9 @@ export class ClientService {
           plan: { select: { id: true, haircutNumber: true, value: true } },
         },
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      throw new HttpException("Não foi possivel atualizar o plano do cliente", HttpStatus.BAD_REQUEST);
+    }
   }
 }
