@@ -109,9 +109,6 @@ CREATE UNIQUE INDEX "Barber_userId_key" ON "Barber"("userId");
 -- CreateIndex
 CREATE UNIQUE INDEX "Client_userId_key" ON "Client"("userId");
 
--- CreateIndex
-CREATE UNIQUE INDEX "FeedBack_barberId_clientId_key" ON "FeedBack"("barberId", "clientId");
-
 -- AddForeignKey
 ALTER TABLE "Barber" ADD CONSTRAINT "Barber_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
