@@ -1,9 +1,11 @@
 import { Transform } from "class-transformer";
 import { IsEmail, IsEnum, IsNotEmpty, IsString, MinLength, IsOptional } from "class-validator";
+import { Trim } from "../decorators/trim.decorator";
 
 export class RegisterAuthDto {
   @IsEmail()
   @IsNotEmpty()
+  @Trim()
   email: string;
 
   @IsString()
@@ -13,6 +15,7 @@ export class RegisterAuthDto {
 
   @IsString()
   @IsNotEmpty()
+  @Trim()
   name: string;
 
   @IsString()
@@ -22,5 +25,6 @@ export class RegisterAuthDto {
       return value.replace(/\D/g, "");
     }
   })
+  @Trim()
   phone: string;
 }
