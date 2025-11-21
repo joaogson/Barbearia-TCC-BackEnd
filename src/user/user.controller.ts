@@ -29,7 +29,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard) // Garante que o usuário está logado
-  @Roles(Role.BARBER, Role.CLIENT, Role.ADMIN)
+  @Roles(Role.BARBER, Role.CLIENT)
   @Patch(":id")
   async update(@Param("id", ParseIntPipe) userId: number, @Body() dto: UpdateUserDto, @Request() req) {
     //Pega o ID do usuário que fez a requisição (do token JWT)
@@ -52,7 +52,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER, Role.CLIENT, Role.ADMIN)
+  @Roles(Role.BARBER, Role.CLIENT)
   @Patch(":id/role") // Endpoint específico para alterar o role de um usuário
   async updateUserRole(@Param("id", ParseIntPipe) userId: number, @Body() updateUserRoleDto: UpdateUserRoleDto) {
     return this.userService.updateUserRole(userId, updateUserRoleDto.role);

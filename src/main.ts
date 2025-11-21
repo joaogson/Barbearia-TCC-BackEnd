@@ -5,7 +5,7 @@ import { ValidationPipe } from "@nestjs/common";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: [process.env.FRONTEND_URL, "http://localhost:3000"], // A URL do seu front (Vercel)
+    origin: [process.env.FRONTEND_URL], // A URL do seu front (Vercel)
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   });

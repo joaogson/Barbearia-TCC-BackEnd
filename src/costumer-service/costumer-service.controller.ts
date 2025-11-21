@@ -12,21 +12,21 @@ export class CostumerServiceController {
   constructor(private readonly costumerServiceService: CostumerService) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.CLIENT, Role.ADMIN)
+  @Roles(Role.CLIENT)
   @Post()
   create(@Body() createCostumerServiceDto: CreateCostumerServiceDto) {
     return this.costumerServiceService.create(createCostumerServiceDto);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER, Role.CLIENT, Role.ADMIN)
+  @Roles(Role.BARBER, Role.CLIENT)
   @Get()
   findAll() {
     return this.costumerServiceService.findAll();
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER, Role.CLIENT, Role.ADMIN)
+  @Roles(Role.BARBER, Role.CLIENT)
   @Get("find")
   findOne(@Request() req) {
     const id = req.user.userId;
@@ -34,7 +34,7 @@ export class CostumerServiceController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.CLIENT, Role.BARBER, Role.ADMIN)
+  @Roles(Role.CLIENT, Role.BARBER)
   @Get("me")
   findById(@Request() req) {
     const id = req.user.userId;
@@ -43,7 +43,7 @@ export class CostumerServiceController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.CLIENT, Role.ADMIN)
+  @Roles(Role.CLIENT)
   @Patch(":id")
   update(@Param("id") id: string, @Body() updateCostumerServiceDto: UpdateCostumerServiceDto) {
     return this.costumerServiceService.update(+id, updateCostumerServiceDto);
@@ -55,7 +55,7 @@ export class CostumerServiceController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER, Role.ADMIN)
+  @Roles(Role.BARBER)
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.costumerServiceService.remove(+id);

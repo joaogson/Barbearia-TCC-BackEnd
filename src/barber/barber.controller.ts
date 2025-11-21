@@ -130,7 +130,7 @@ export class BarberController {
 
   @Get("me/interval")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BARBER, Role.ADMIN)
+  @Roles(Role.BARBER)
   getInterval(@Request() req) {}
 
   @UseGuards(JwtAuthGuard)
