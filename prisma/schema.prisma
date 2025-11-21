@@ -96,7 +96,7 @@ model FeedBack {
   client   Client @relation(fields: [clientId], references: [id])
   clientId Int 
   barber   Barber @relation(fields: [barberId], references: [id])
-  barberId Int    
+  barberId Int  
 }
 
 model CostumerService{
@@ -119,7 +119,7 @@ model Service{
   duration Int
 }
 
-'model ServiceOnCostumerService{
+model ServiceOnCostumerService{
   @@id([costumerServiceId, serviceId])
   costumerServiceId Int
   serviceId Int
