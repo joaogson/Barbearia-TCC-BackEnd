@@ -12,6 +12,7 @@ export class AuthController {
 
   @Post("register")
   register(@Body(ValidationPipe) registerAuthDto: RegisterAuthDto) {
+    console.log("Registro: ", registerAuthDto);
     return this.authService.register(registerAuthDto);
   }
 

@@ -1,4 +1,4 @@
-import { IsBoolean, IsDateString, IsInt, IsNotEmpty, IsPositive } from "class-validator";
+import { ArrayMinSize, IsBoolean, IsDateString, IsInt, IsNotEmpty, IsPositive } from "class-validator";
 
 export class CreateCostumerServiceDto {
   @IsDateString()
@@ -18,8 +18,8 @@ export class CreateCostumerServiceDto {
   @IsNotEmpty()
   barberId: number;
 
-  @IsInt()
-  @IsPositive()
   @IsNotEmpty()
+  @IsInt({ each: true })
+  @ArrayMinSize(1)
   servicesIds: number[];
 }

@@ -15,6 +15,7 @@ export class ServiceController {
   @Roles(Role.BARBER)
   @Post()
   create(@Body() createServiceDto: CreateServiceDto) {
+    console.log("Serviço: ", createServiceDto);
     return this.serviceService.create(createServiceDto);
   }
 
