@@ -9,7 +9,7 @@ async function bootstrap() {
       "http://localhost:3000", // Se o seu frontend Next.js rodar na porta 3000
       "http://localhost:3001",
       "http://localhost:3002",
-      "https://barbearia-tcc-frontend.onrender.com",
+      "https://guapobarbearia.vercel.app",
     ], // A URL do seu front (Vercel)
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
