@@ -20,10 +20,10 @@ export class BarberService {
   async getAllBarbers() {
     try {
       const barbers = await this.prisma.barber.findMany({
-        where:{
-          id:{
-            not: 1
-          }
+        where: {
+          id: {
+            not: 1,
+          },
         },
         include: {
           user: {
@@ -133,15 +133,12 @@ export class BarberService {
         throw new HttpException("O horario de inicio deve ser maior que o de final!", HttpStatus.BAD_REQUEST);
 
       const dateToSave = toDate(createInactivePeriodDto.date, { timeZone: TIMEZONE });
-
       return this.prisma.inactivePeriod.create({
         data: {
           date: dateToSave,
           startTime: createInactivePeriodDto.startTime,
           endTime: createInactivePeriodDto.endTime,
-          barber: {
-            connect: { id: barber.id },
-          },
+          barber: { connect: { id: barber.id } },
         },
       });
     } catch (error) {

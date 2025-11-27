@@ -94,6 +94,7 @@ export class BarberController {
   @UseGuards(JwtAuthGuard)
   createInactivePeriod(@Request() req, @Body() createInactivePeriodDto: CreateInactivePeriodDto) {
     const userId = req.user.userId;
+    console.log("UserId no controller:", userId);
     return this.barberService.createInactivePeriods(userId, createInactivePeriodDto);
   }
 

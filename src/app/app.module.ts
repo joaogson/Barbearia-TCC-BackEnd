@@ -6,14 +6,15 @@ import { PrismaModule } from "src/prisma/prisma.module";
 import { PlanModule } from "src/plan/plan.module";
 import { FeedbackModule } from "src/feedback/feedback.module";
 import { CostumerServiceModule } from "src/costumer-service/costumer-service.module";
-import { Module, MiddlewareConsumer, RequestMethod } from "@nestjs/common";
+import { Module, MiddlewareConsumer, RequestMethod, Injectable, NestMiddleware } from "@nestjs/common";
 import { ServiceModule } from "src/service/service.module";
 import { BarberModule } from "src/barber/barber.module";
 import { AuthModule } from "src/auth/auth.module";
 import { MailerModule } from "@nestjs-modules/mailer";
-import nodemailerSendgrid from 'nodemailer-sendgrid';
+import nodemailerSendgrid from "nodemailer-sendgrid";
 
 import { hostname } from "os";
+import { NextFunction } from "express";
 
 @Module({
   imports: [
@@ -38,4 +39,4 @@ import { hostname } from "os";
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule  {}
+export class AppModule {}
