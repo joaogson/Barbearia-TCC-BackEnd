@@ -16,9 +16,4 @@ export class CreateInactivePeriodDto {
     message: "O horário de término deve estar no formato HH:MM",
   })
   endTime: string;
-
-  @IsNumber()
-  babedId: number;
-
-  barber: Barber;
 }
