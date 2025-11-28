@@ -10,11 +10,9 @@ export class RolesGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [context.getHandler(), context.getClass()]);
     if (!requiredRoles) {
-      return true; // Se não há @Roles definido, permite o acesso
+      return true;
     }
     const { user } = context.switchToHttp().getRequest();
-    // user é o payload do JWT, anexado pelo JwtAuthGuard
-    // Esperamos que ele tenha um campo 'role'
     return requiredRoles.some((role) => user.role === role);
   }
 }

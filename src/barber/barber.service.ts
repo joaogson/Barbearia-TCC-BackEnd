@@ -20,10 +20,10 @@ export class BarberService {
   async getAllBarbers() {
     try {
       const barbers = await this.prisma.barber.findMany({
-        where:{
-          id:{
-            not: 1
-          }
+        where: {
+          id: {
+            not: 1,
+          },
         },
         include: {
           user: {
@@ -43,10 +43,6 @@ export class BarberService {
       throw new HttpException("Não foi possivel buscar pelos barbeiros", HttpStatus.BAD_REQUEST);
     }
   }
-
-  /**
-   * Busca o perfil do barbeiro pelo ID do usuário
-   */
 
   async getBarber(id: number) {
     try {
@@ -155,7 +151,6 @@ export class BarberService {
       const barber = await this.prisma.barber.findUnique({ where: { userId } });
       if (!barber) throw new NotFoundException("Barbeiro não encontrado.");
       console.log("GetBarbeiro: ", barber);
-      // Lógica para buscar os períodos apenas para o dia especificado
       const startDate = new Date(date);
       startDate.setUTCHours(0, 0, 0, 0);
 
@@ -168,8 +163,8 @@ export class BarberService {
         where: {
           barbedId: barber.id,
           date: {
-            gte: startDate, // gte = Greater Than or Equal (maior ou igual a)
-            lte: endDate, // lte = Less Than or Equal (menor ou igual a)
+            gte: startDate,
+            lte: endDate,
           },
         },
       });
@@ -183,7 +178,6 @@ export class BarberService {
       const barber = await this.prisma.barber.findUnique({ where: { userId: userId } });
 
       if (!barber) throw new NotFoundException("Barbeiro não encontrado.");
-      // Verificação de segurança: garante que o barbeiro só pode deletar seus próprios períodos
       const period = await this.prisma.inactivePeriod.findFirst({
         where: { id: id, barbedId: barber.id },
       });

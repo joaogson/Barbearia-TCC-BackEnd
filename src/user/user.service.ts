@@ -16,7 +16,6 @@ export class UserService {
     const hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
     try {
       const newUser = await this.prisma.$transaction(async (tx) => {
-        // 1. Criar o User
         const user = await tx.user.create({
           data: {
             email: createUserDto.email,
@@ -27,7 +26,6 @@ export class UserService {
           },
         });
 
-        // 2. Criar o Perfil associado
         if (user.role === Role.BARBER) {
           await tx.barber.create({
             data: {
@@ -105,21 +103,18 @@ export class UserService {
 
   async update(userId: number, dto: UpdateUserDto) {
     try {
-      // O método 'update' do Prisma busca pelo 'where' e atualiza com o 'data'
       const user = await this.prisma.user.update({
         where: {
           id: userId,
         },
         data: {
-          ...dto, // Passa todos os campos do DTO que foram enviados
+          ...dto,
         },
       });
 
-      // Remove o hash da senha da resposta por segurança
       const { password, ...result } = user;
       return result;
     } catch (error) {
-      // --- Tratamento de Erros Específicos do Prisma ---
       throw new HttpException("Não foi possivel atualizar o usuario", HttpStatus.BAD_REQUEST);
     }
   }
@@ -150,7 +145,6 @@ export class UserService {
   }
 
   async updatePassword(userId: number, updatePasswordDto: UpdatePasswordDto) {
-    //Buscar o usuário e garantir que ele exista
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
@@ -159,23 +153,19 @@ export class UserService {
       throw new NotFoundException("Usuário não encontrado.");
     }
 
-    // Verificar se a senha atual se é correta
     const isPasswordValid = await bcrypt.compare(updatePasswordDto.currentPassword, user.password);
 
     if (!isPasswordValid) {
       throw new ForbiddenException("A senha atual está incorreta.");
     }
 
-    //Verificar se a nova senha não é igual à antiga
     if (updatePasswordDto.currentPassword === updatePasswordDto.newPassword) {
       throw new ConflictException("A nova senha não pode ser igual à senha atual.");
     }
 
-    //Gerar o hash para a nova senha
     const salt = await bcrypt.genSalt();
     const newPasswordHash = await bcrypt.hash(updatePasswordDto.newPassword, salt);
 
-    //Atualizar o usuário no banco de dados com a nova senha (hashed)
     await this.prisma.user.update({
       where: { id: userId },
       data: { password: newPasswordHash },
@@ -185,7 +175,6 @@ export class UserService {
   }
 
   async updateUserRole(userId: number, role: Role) {
-    // 1. Primeiro, verificar se o usuário que será atualizado realmente existe
     const userExists = await this.prisma.user.findUnique({
       where: { id: userId },
     });
@@ -194,20 +183,17 @@ export class UserService {
       throw new NotFoundException(`Usuário não encontrado.`);
     }
 
-    // 2. Atualizar o campo 'role' do usuário
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: { role: role },
     });
 
     if (updatedUser.role === Role.BARBER) {
-      // Criar perfil de barbeiro se não existir
       const barberProfile = await this.prisma.barber.findUnique({
         where: { userId: userId },
       });
 
       if (!barberProfile) {
-        // Se o perfil de barbeiro não existir, crie um novo
         await this.prisma.barber.create({
           data: { userId: userId },
         });
@@ -224,7 +210,6 @@ export class UserService {
       }
     }
 
-    // 3. Remover o hash da senha da resposta antes de retorná-la
     const { password, ...result } = updatedUser;
     return result;
   }

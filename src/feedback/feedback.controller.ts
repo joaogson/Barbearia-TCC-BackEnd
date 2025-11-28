@@ -29,7 +29,7 @@ export class FeedbackController {
   @Get("me")
   getMyFeedbacks(@Request() req) {
     const userId = req.user.userId;
-    const role = req.user.role; // Pega o ID do usuário do token JWT
+    const role = req.user.role;
     return this.feedbackService.findFeedbacksByUser(userId, role);
   }
 

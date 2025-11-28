@@ -28,32 +28,28 @@ export class UserController {
     return this.userService.findById(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard) // Garante que o usuário está logado
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BARBER, Role.CLIENT)
   @Patch(":id")
   async update(@Param("id", ParseIntPipe) userId: number, @Body() dto: UpdateUserDto, @Request() req) {
-    //Pega o ID do usuário que fez a requisição (do token JWT)
     const loggedInUserId = req.user.userId;
-    //O ID do usuário logado deve ser o mesmo do parâmetro da URL
     if (loggedInUserId !== userId) {
-      // Se não for, ele não tem permissão para alterar os dados de outro usuário.
       throw new ForbiddenException("Você não tem permissão para executar esta ação.");
     }
 
-    //Se a permissão for válida, chama o serviço
     return this.userService.update(userId, dto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch("update-password")
   async updatePassword(@Request() req, @Body() updatePasswordDto: UpdatePasswordDto) {
-    const userId = req.user["id"]; // Pega o ID do usuário logado
+    const userId = req.user["id"];
     return this.userService.updatePassword(userId, updatePasswordDto);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BARBER, Role.CLIENT)
-  @Patch(":id/role") // Endpoint específico para alterar o role de um usuário
+  @Patch(":id/role")
   async updateUserRole(@Param("id", ParseIntPipe) userId: number, @Body() updateUserRoleDto: UpdateUserRoleDto) {
     return this.userService.updateUserRole(userId, updateUserRoleDto.role);
   }

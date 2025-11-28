@@ -13,14 +13,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  /**
-   * Este método só é chamado se o token for VÁLIDO.
-   */
   async validate(payload: any) {
     if (!payload.sub || !payload.role) {
       throw new UnauthorizedException();
     }
     console.log(payload.sub);
-    return { userId: payload.sub, role: payload.role }; // <- Isso se torna request.user
+    return { userId: payload.sub, role: payload.role };
   }
 }

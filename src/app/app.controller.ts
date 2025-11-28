@@ -9,9 +9,8 @@ export class AppController {
     private readonly prisma: PrismaService
   ) {}
 
-  @Get("/health") // <- O novo endpoint
+  @Get("/health") 
   async healthCheck() {
-    // Esta query força o banco a ficar acordado
     await this.prisma.$queryRaw`SELECT 1`;
     console.log("OK");
     return { status: "ok", time: new Date() };

@@ -88,8 +88,6 @@ export class BarberController {
     return this.barberService.create(req);
   }
 
-  //INACTIVE PERIODS
-  //INACTIVE PERIODS
   @Post("me/inactive-periods")
   @UseGuards(JwtAuthGuard)
   createInactivePeriod(@Request() req, @Body() createInactivePeriodDto: CreateInactivePeriodDto) {
@@ -97,7 +95,6 @@ export class BarberController {
     return this.barberService.createInactivePeriods(userId, createInactivePeriodDto);
   }
 
-  // ROTA PARA LISTAR OS PERÍODOS DE UM DIA (útil para o front-end)
   @Get("me/inactive-periods")
   @UseGuards(JwtAuthGuard)
   getInactivePeriods(@Request() req, @Query("date") date: string) {
@@ -106,7 +103,6 @@ export class BarberController {
     return this.barberService.getInactivePeriodsByDate(userId, date);
   }
 
-  // ROTA PARA DELETAR UM PERÍODO INATIVO
   @Delete("me/inactive-periods/:id")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BARBER)
@@ -136,7 +132,7 @@ export class BarberController {
   @UseGuards(JwtAuthGuard)
   @Get("me/feedback")
   getMyFeedbacks(@Request() req) {
-    const userId = req.user.userId; // Pega o ID do usuário do token JWT
+    const userId = req.user.userId;
     return this.feedbackService.findMyBarberFeedBacks(userId);
   }
 

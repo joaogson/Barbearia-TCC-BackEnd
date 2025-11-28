@@ -24,13 +24,13 @@ export class UpdateClientDto extends PartialType(CreateClientDto) {
   readonly password?: string;
 
   @IsOptional()
-  @ValidateIf((o) => o.planId !== null) // Só valida se o valor não for 'null'
-  @IsString() // ou @IsString(), dependendo do seu tipo de ID
+  @ValidateIf((o) => o.planId !== null)
+  @IsString()
   planId?: number | null;
 }
 
 export class UpdateClientPlanDto {
   @IsInt()
-  @IsOptional() // Permite 'null'
+  @IsOptional()
   planId: number | null;
 }

@@ -12,10 +12,9 @@ export class ClientService {
     try {
       const dataToUpdate: Prisma.ClientUpdateInput = {};
       if (updadateClientDto.planId) {
-        // Cenário: O usuário quer MUDAR ou ADICIONAR um plano (enviou um ID)
         dataToUpdate.plan = {
           connect: {
-            id: updadateClientDto.planId, // Conecte ao plano com este ID
+            id: updadateClientDto.planId,
           },
         };
       }

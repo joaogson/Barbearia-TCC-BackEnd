@@ -43,21 +43,14 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
-    // Encontrar o usuário pelo e-mail
     const user = await this.prisma.user.findUnique({ where: { email } });
     if (!user) {
-      // ATENÇÃO: Por segurança, não diga "usuário não encontrado".
-      // Apenas retorne sucesso para não confirmar se um e-mail existe.
       return { message: "Link enviado casa existe um usuario vinculado a este email!" };
     }
-
-    // Gerar um token secreto e aleatório
     const resetToken = crypto.randomBytes(32).toString("hex");
 
-    // Definir data de expiração
-    const expires = new Date(Date.now() + 10 * 60 * 1000); //10 min
+    const expires = new Date(Date.now() + 10 * 60 * 1000);
 
-    // Salvar o token e a data de expiração no usuário
     await this.prisma.user.update({
       where: { id: user.id },
       data: {
@@ -66,10 +59,8 @@ export class AuthService {
       },
     });
 
-    //Criar o link que vai no e-mail
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
-    // Enviar o e-mail
     await this.mailerService.sendMail({
       to: user.email,
       subject: "Recuperação de Senha - Barbearia TCC",
@@ -86,33 +77,26 @@ export class AuthService {
     return { message: "Link de redefinição enviado para o e-mail." };
   }
 
-  /**
-   * Usuário envia a nova senha
-   */
   async resetPassword(token: string, newPassword: string) {
-    // Encontrar o usuário pelo token e verificar se não expirou
     const user = await this.prisma.user.findFirst({
       where: {
         passwordResetToken: token,
-        passwordResetTokenExpires: { gt: new Date() }, // gt = Greater Than (maior que) agora
+        passwordResetTokenExpires: { gt: new Date() },
       },
     });
 
-    // Se o token for inválido ou expirado
     if (!user) {
       throw new BadRequestException("Token inválido ou expirado.");
     }
 
-    // Gerar o hash da nova senha
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Atualizar o usuário com a nova senha e limpar o token
     await this.prisma.user.update({
       where: { id: user.id },
       data: {
         password: hashedPassword,
-        passwordResetToken: null, // Limpa o token
-        passwordResetTokenExpires: null, // Limpa a expiração
+        passwordResetToken: null,
+        passwordResetTokenExpires: null,
       },
     });
 
