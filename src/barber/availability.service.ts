@@ -57,7 +57,6 @@ export class AvailabilityService {
       const workStart = dayjs(toDate(workStartString, { timeZone: TIMEZONE }));
       const workEnd = dayjs(toDate(workEndString, { timeZone: TIMEZONE }));
 
-      console.log("Availability Service - workStart (Local): ", format(toZonedTime(workStart.toDate(), TIMEZONE), "HH:mm"));
       console.log(`Availability Service - workEnd (Local) ${format(toZonedTime(workEnd.toDate(), TIMEZONE), "HH:mm")}`);
 
       const slots: dayjs.Dayjs[] = [];
@@ -75,9 +74,7 @@ export class AvailabilityService {
         // se o agendamento termina depois do horario de expediente
         if (slotEnd.isAfter(workEnd)) return false;
 
-        //Conflita com um periodo invalido
-        console.log("Availability Service - PERIODOS INATIVOS: ");
-
+        //VERIFICA SE CONFLITA COM ALGUM PERIODO DE INATIVIDADE
         const isInactive = inactivePeriods.some((p) => {
           const periodStartString = `${date} ${p.startTime}`;
           const periodEndString = `${date} ${p.endTime}`;
@@ -97,8 +94,6 @@ export class AvailabilityService {
           return false;
         }
 
-        // Conflita com outro agendamento existente
-        console.log("OUTROS ATENDIMENTOS: ");
         const inCostumerService = costumerServices.some((c) => {
           const costumerServiceStart = dayjs(c.ServiceTime);
           const existingCostumerServiceDuration = c.totalDuration + breakTime;
