@@ -25,9 +25,6 @@ export class AvailabilityService {
 
       if (services.length !== serviceIds.length) throw new HttpException("Serviços invalidos", HttpStatus.BAD_REQUEST);
       const totalDuration = services.reduce((sum, s) => sum + s.duration, 0);
-      console.log(`Availability Service - Duração total calculada: ${totalDuration} minutos`);
-      console.log("Availability Service - Barber Id: ", barberId);
-
       const dayStart = toDate(`${date} 00:00:00`, { timeZone: TIMEZONE });
       const dayEnd = toDate(`${date} 23:59:59`, { timeZone: TIMEZONE });
 
@@ -57,11 +54,10 @@ export class AvailabilityService {
       const workStart = dayjs(toDate(workStartString, { timeZone: TIMEZONE }));
       const workEnd = dayjs(toDate(workEndString, { timeZone: TIMEZONE }));
 
-      console.log(`Availability Service - workEnd (Local) ${format(toZonedTime(workEnd.toDate(), TIMEZONE), "HH:mm")}`);
-
       const slots: dayjs.Dayjs[] = [];
 
       const interval = 15;
+
       let currentSlot = workStart;
       while (currentSlot.isBefore(workEnd)) {
         slots.push(currentSlot);
@@ -71,7 +67,6 @@ export class AvailabilityService {
       const availableSlots = slots.filter((slot) => {
         const slotEnd = slot.add(totalDurationCostumerService, "minute");
 
-        // se o agendamento termina depois do horario de expediente
         if (slotEnd.isAfter(workEnd)) return false;
 
         //VERIFICA SE CONFLITA COM ALGUM PERIODO DE INATIVIDADE
@@ -94,6 +89,7 @@ export class AvailabilityService {
           return false;
         }
 
+        //VERIFICA SE CONFLITA COM OUTRO AGENDAMENTO
         const inCostumerService = costumerServices.some((c) => {
           const costumerServiceStart = dayjs(c.ServiceTime);
           const existingCostumerServiceDuration = c.totalDuration + breakTime;
