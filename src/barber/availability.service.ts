@@ -54,6 +54,9 @@ export class AvailabilityService {
       const workStart = dayjs(toDate(workStartString, { timeZone: TIMEZONE }));
       const workEnd = dayjs(toDate(workEndString, { timeZone: TIMEZONE }));
 
+      console.log(`inicio - fim de expediente (STRING): ${workStartString} - ${workEndString}`);
+      console.log(`inicio - fim de expediente: ${workStart} - ${workEnd}`);
+
       const slots: dayjs.Dayjs[] = [];
 
       const interval = 15;
@@ -80,7 +83,7 @@ export class AvailabilityService {
           const formatLocal = (dt) => format(toZonedTime(dt.toDate(), TIMEZONE), "HH:mm");
           console.log(
             `Availability Service - Verificando Slot [${formatLocal(slot)} - ${formatLocal(slotEnd)}] ` +
-              `contra Período Inativo [${formatLocal(periodStart)} - ${formatLocal(periodEnd)}]`
+              `contra Período Inativo [${formatLocal(periodStart)} - ${formatLocal(periodEnd)}]`,
           );
 
           return slot.isBefore(periodEnd) && slotEnd.isAfter(periodStart);
