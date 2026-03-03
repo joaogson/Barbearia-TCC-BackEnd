@@ -117,6 +117,7 @@ export class AvailabilityService {
 
       return availableSlots.map((slotUtc) => {
         const zonedSlot = toZonedTime(slotUtc.toDate(), TIMEZONE);
+        console.log(zonedSlot);
         console.log(dayjs(zonedSlot).format());
         return dayjs(zonedSlot).format();
       });
